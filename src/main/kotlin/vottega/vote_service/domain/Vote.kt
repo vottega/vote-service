@@ -33,7 +33,7 @@ class Vote(title: String, val roomId: Long, userIdList: List<UUID>, passRate: Fr
     var passRate: FractionVO = passRate
         private set
 
-    var voteResultType: VoteResultType? = null
+    var voteResultType: VoteResultType = VoteResultType.NOT_DECIDED
         private set
 
     fun startVote() {
