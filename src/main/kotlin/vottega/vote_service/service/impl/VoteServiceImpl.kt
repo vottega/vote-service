@@ -28,7 +28,6 @@ class VoteServiceImpl(
         val vote = Vote(
             title = title,
             roomId = roomId,
-            userIdList = room.participants.map { it.id },
             fraction
         )
         voteRepository.save(vote)
@@ -36,7 +35,9 @@ class VoteServiceImpl(
 
     override fun startVote(voteId: Long) {
         val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
-        vote.startVote()
+
+        val room = roomClient.getRoom(vote.roomId)
+        vote.startVote(room.participants.filter { it.canVote && it.isEntered }.map { it.id }.toMutableList())
     }
 
     override fun endVote(voteId: Long) {

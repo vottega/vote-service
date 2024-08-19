@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-class Vote(title: String, val roomId: Long, userIdList: List<UUID>, passRate: FractionVO) {
+class Vote(title: String, val roomId: Long, passRate: FractionVO) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -17,7 +17,7 @@ class Vote(title: String, val roomId: Long, userIdList: List<UUID>, passRate: Fr
         private set
 
     @OneToMany(mappedBy = "vote", orphanRemoval = true, cascade = [CascadeType.ALL])
-    var votePaperList: MutableList<VotePaper> = userIdList.map { VotePaper(it, this) }.toMutableList()
+    var votePaperList: MutableList<VotePaper> = mutableListOf()
         private set
     var createdAt: LocalDateTime? = null
         private set
@@ -36,9 +36,12 @@ class Vote(title: String, val roomId: Long, userIdList: List<UUID>, passRate: Fr
     var voteResultType: VoteResultType = VoteResultType.NOT_DECIDED
         private set
 
-    fun startVote() {
+    fun startVote(userIdList: List<UUID>) {
         if (status == VoteStatus.CREATED) {
             status = VoteStatus.STARTED
+            userIdList.forEach {
+                votePaperList.add(VotePaper(it, this))
+            }
             startedAt = LocalDateTime.now()
         } else {
             throw IllegalStateException("이미 시작된 투표입니다.")
