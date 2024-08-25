@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class RoomResponseDTO(
     val id: Long,
     val name: String,
-    val participants: List<ParticipantResponseDTO>,
+    val participants: List<ParticipantDetailResponseDTO>,
     val createdAt: LocalDateTime,
     val lastUpdatedAt: LocalDateTime,
     val startedAt: LocalDateTime?,

@@ -5,6 +5,7 @@ import vottega.vote_service.domain.enum.VoteStatus
 import java.time.LocalDateTime
 
 data class VoteResponseDTO(
+    val id : Long?,
     val title: String,
     val status : VoteStatus,
     val yesNum : Int,
