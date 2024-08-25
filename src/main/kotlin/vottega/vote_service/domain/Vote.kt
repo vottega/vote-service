@@ -5,6 +5,7 @@ import vottega.room_service.dto.RoomResponseDTO
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.domain.enum.VoteResultType
 import vottega.vote_service.domain.enum.VoteStatus
+import vottega.vote_service.exception.VoteStatusConflictException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -45,7 +46,7 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
             status = VoteStatus.STARTED
             startedAt = LocalDateTime.now()
         } else {
-            throw IllegalStateException("이미 시작된 투표입니다.")
+            throw VoteStatusConflictException("이미 시작된 투표입니다.")
         }
     }
 
@@ -60,7 +61,7 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
                 result = VoteResultType.REJECTED
             }
         } else {
-            throw IllegalStateException("아직 시작되지 않은 투표입니다.")
+            throw VoteStatusConflictException("아직 시작되지 않은 투표입니다.")
         }
     }
 
@@ -68,18 +69,18 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
         if (status == VoteStatus.STARTED) {
             votePaperList.forEach { it.voteResultType = VotePaperType.NOT_VOTED }
         } else {
-            throw IllegalStateException("투표가 진행 중이지 않습니다.")
+            throw VoteStatusConflictException("투표가 진행 중이지 않습니다.")
         }
     }
 
     fun addVotePaper(userId: UUID, voteResultType: VotePaperType) {
         if (status != VoteStatus.STARTED) {
-            throw IllegalStateException("투표가 시작되지 않았습니다.")
+            throw VoteStatusConflictException("투표가 시작되지 않았습니다.")
         }
         votePaperList.forEach() {
             //이미 투표한 사람인지 확인
             if (it.userId == userId && it.voteResultType != VotePaperType.NOT_VOTED) {
-                throw IllegalStateException("이미 투표한 사람입니다.")
+                throw VoteStatusConflictException("이미 투표한 사람입니다.")
             } else if (it.userId == userId) {
                 it.vote(voteResultType)
                 return

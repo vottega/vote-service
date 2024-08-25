@@ -11,6 +11,7 @@ import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
 import vottega.vote_service.dto.mapper.VoteDetailResponseDTOMapper
 import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
+import vottega.vote_service.exception.VoteNotFoundException
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.VoteService
 import java.util.*
@@ -40,18 +41,19 @@ class VoteServiceImpl(
     }
 
     override fun editVoteStatus(voteId: Long, action : String) : VoteDetailResponseDTO {
-        val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
         val room = roomClient.getRoom(vote.roomId)
         when (action) {
             "start" -> vote.startVote(room)
             "end" -> vote.endVote()
+            else -> throw IllegalArgumentException("Invalid Action")
         }
         return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
     }
 
 
     override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
-        val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId)  }
         vote.addVotePaper(userId, voteResultType)
     }
 
@@ -62,7 +64,7 @@ class VoteServiceImpl(
     }
 
     override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
-        val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId)  }
         val room = roomClient.getRoom(vote.roomId)
         return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
     }
