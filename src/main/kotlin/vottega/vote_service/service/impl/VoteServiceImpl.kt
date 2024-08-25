@@ -7,6 +7,7 @@ import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VoteDetailResponseDTO
+import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.VoteService
@@ -18,32 +19,35 @@ class VoteServiceImpl(
     private val voteRepository: VoteRepository,
     private val roomClient: RoomClient
 ) : VoteService {
-    override fun createVote(title: String, roomId: Long, passRateNumerator: Int?, passRateDenominator: Int?) {
+    override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO) : VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
-        val fraction = if(passRateNumerator != null && passRateDenominator != null) {
-            FractionVO(passRateNumerator, passRateDenominator)
+        val fraction = if(voteRequestDTO.passRateNumerator != null && voteRequestDTO.passRateDenominator != null) {
+            FractionVO(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator)
         } else {
             FractionVO(1, 2)
         }
         val vote = Vote(
-            title = title,
+            title = voteRequestDTO.title,
             roomId = roomId,
             fraction
         )
-        voteRepository.save(vote)
+        val createdVote = voteRepository.save(vote)
     }
 
-    override fun startVote(voteId: Long) {
+    override fun editVoteStatus(voteId: Long, action : String) : VoteDetailResponseDTO {
         val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        when (action) {
+            "start" -> startVote(vote)
+            "end" -> vote.endVote()
+        }
 
+    }
+
+    private fun startVote(vote: Vote) {
         val room = roomClient.getRoom(vote.roomId)
-        vote.startVote(room.participants.filter { it.canVote && it.isEntered }.map { it.id }.toMutableList())
+        vote.startVote(room)
     }
 
-    override fun endVote(voteId: Long) {
-        val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
-        vote.endVote()
-    }
 
     override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
         val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
@@ -53,13 +57,14 @@ class VoteServiceImpl(
     override fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
         return voteRepository.findByRoomId(roomId).map {
             VoteResponseDTO(
+                id = it.id,
                 title = it.title,
                 status = it.status,
                 createdAt = it.createdAt,
                 yesNum = it.votePaperList.count { it.voteResultType == VotePaperType.YES },
                 noNum = it.votePaperList.count { it.voteResultType == VotePaperType.NO },
                 abstainNum = it.votePaperList.count { it.voteResultType == VotePaperType.ABSTAIN },
-                result = it.voteResultType
+                result = it.result
             )
         }
     }

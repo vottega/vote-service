@@ -1,6 +1,7 @@
 package vottega.vote_service.domain
 
 import jakarta.persistence.*
+import vottega.room_service.dto.RoomResponseDTO
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.domain.enum.VoteResultType
 import vottega.vote_service.domain.enum.VoteStatus
@@ -33,15 +34,15 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
     var passRate: FractionVO = passRate
         private set
 
-    var voteResultType: VoteResultType = VoteResultType.NOT_DECIDED
+    var result: VoteResultType = VoteResultType.NOT_DECIDED
         private set
 
-    fun startVote(userIdList: List<UUID>) {
+    fun startVote(room: RoomResponseDTO) {
         if (status == VoteStatus.CREATED) {
-            status = VoteStatus.STARTED
-            userIdList.forEach {
-                votePaperList.add(VotePaper(it, this))
+            room.participants.filter { it.canVote }.forEach {
+                votePaperList.add(VotePaper(it.id, this))
             }
+            status = VoteStatus.STARTED
             startedAt = LocalDateTime.now()
         } else {
             throw IllegalStateException("이미 시작된 투표입니다.")
@@ -54,9 +55,9 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
             finishedAt = LocalDateTime.now()
             val yesNum = votePaperList.count { it.voteResultType == VotePaperType.YES }
             if (yesNum >= passRate.multipy(votePaperList.size)) {
-                voteResultType = VoteResultType.PASSED
+                result = VoteResultType.PASSED
             } else {
-                voteResultType = VoteResultType.REJECTED
+                result = VoteResultType.REJECTED
             }
         } else {
             throw IllegalStateException("아직 시작되지 않은 투표입니다.")
