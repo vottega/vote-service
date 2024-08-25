@@ -1,5 +1,6 @@
 package vottega.vote_service.web
 
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VoteRequestDTO
@@ -14,6 +15,7 @@ class VoteController(private val voteService: VoteService) {
         voteService.editVoteStatus(voteId, action)
 
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{roomId}")
     fun createVote(@PathVariable roomId: Long, @RequestBody voteRequestDTO: VoteRequestDTO) =
         voteService.createVote(roomId, voteRequestDTO)
@@ -26,6 +28,7 @@ class VoteController(private val voteService: VoteService) {
     @GetMapping("/{voteId}/detail")
     fun getVoteDetail(@PathVariable voteId: Long) = voteService.getVoteDetail(voteId)
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{voteId}")
     fun addVotePaper(@PathVariable voteId: Long, userId: UUID, voteResultType: VotePaperType) =
         voteService.addVotePaper(voteId, userId, voteResultType)
