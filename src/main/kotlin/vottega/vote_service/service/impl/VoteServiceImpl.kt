@@ -9,6 +9,8 @@ import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VoteDetailResponseDTO
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
+import vottega.vote_service.dto.mapper.VoteDetailResponseDTOMapper
+import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.VoteService
 import java.util.*
@@ -17,7 +19,9 @@ import java.util.*
 @Transactional
 class VoteServiceImpl(
     private val voteRepository: VoteRepository,
-    private val roomClient: RoomClient
+    private val roomClient: RoomClient,
+    private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
+    private val voteResponseDTOMapper: VoteResponseDTOMapper,
 ) : VoteService {
     override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO) : VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
@@ -32,20 +36,17 @@ class VoteServiceImpl(
             fraction
         )
         val createdVote = voteRepository.save(vote)
+        return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote, room)
     }
 
     override fun editVoteStatus(voteId: Long, action : String) : VoteDetailResponseDTO {
         val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        val room = roomClient.getRoom(vote.roomId)
         when (action) {
-            "start" -> startVote(vote)
+            "start" -> vote.startVote(room)
             "end" -> vote.endVote()
         }
-
-    }
-
-    private fun startVote(vote: Vote) {
-        val room = roomClient.getRoom(vote.roomId)
-        vote.startVote(room)
+        return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
     }
 
 
@@ -56,20 +57,13 @@ class VoteServiceImpl(
 
     override fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
         return voteRepository.findByRoomId(roomId).map {
-            VoteResponseDTO(
-                id = it.id,
-                title = it.title,
-                status = it.status,
-                createdAt = it.createdAt,
-                yesNum = it.votePaperList.count { it.voteResultType == VotePaperType.YES },
-                noNum = it.votePaperList.count { it.voteResultType == VotePaperType.NO },
-                abstainNum = it.votePaperList.count { it.voteResultType == VotePaperType.ABSTAIN },
-                result = it.result
-            )
+            voteResponseDTOMapper.mapToResponse(it)
         }
     }
 
-    override fun getVoteDetail(voteId: Long): List<VoteDetailResponseDTO> {
-        TODO("Not yet implemented")
+    override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
+        val vote = voteRepository.findById(voteId).orElseThrow { IllegalArgumentException("Vote not found") }
+        val room = roomClient.getRoom(vote.roomId)
+        return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
     }
 }
