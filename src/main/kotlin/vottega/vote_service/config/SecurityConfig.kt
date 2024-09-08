@@ -6,8 +6,8 @@ import org.springframework.security.web.SecurityFilterChain
 
 @EnableWebSecurity
 class SecurityConfig {
-    @Bean
-    fun canVoteSecurity(): SecurityFilterChain {
-        //vote 할 수 있는거 체크
-    }
+//    @Bean
+//    fun canVoteSecurity(): SecurityFilterChain {
+//        //vote 할 수 있는거 체크
+//    }
 }

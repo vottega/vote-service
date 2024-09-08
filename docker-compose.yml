@@ -1,0 +1,27 @@
+version: '3'
+services:
+  vote-service:
+    build: .
+    ports:
+      - "8082:8080"
+    depends_on:
+      - vote-db
+      - kafka
+    networks:
+      - vottega-network
+
+  vote-db:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: minguni
+      MYSQL_DATABASE: vote-db
+      MARIADB_USER: minguni
+      MARIADB_PASSWORD: minguni
+    ports:
+      - "3308:3306"
+    networks:
+      - vottega-network
+
+networks:
+  vottega-network:
+    external: true
