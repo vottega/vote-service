@@ -12,4 +12,6 @@ interface VoteService {
     fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType)
     fun getVoteInfo(roomId: Long) : List<VoteResponseDTO>
     fun getVoteDetail(voteId: Long) : VoteDetailResponseDTO
+
+    fun resetVote(voteId: Long)
 }

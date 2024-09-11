@@ -24,9 +24,9 @@ class VoteServiceImpl(
     private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
     private val voteResponseDTOMapper: VoteResponseDTOMapper,
 ) : VoteService {
-    override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO) : VoteDetailResponseDTO {
+    override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
-        val fraction = if(voteRequestDTO.passRateNumerator != null && voteRequestDTO.passRateDenominator != null) {
+        val fraction = if (voteRequestDTO.passRateNumerator != null && voteRequestDTO.passRateDenominator != null) {
             FractionVO(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator)
         } else {
             FractionVO(1, 2)
@@ -40,7 +40,7 @@ class VoteServiceImpl(
         return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote, room)
     }
 
-    override fun editVoteStatus(voteId: Long, action : String) : VoteDetailResponseDTO {
+    override fun editVoteStatus(voteId: Long, action: String): VoteDetailResponseDTO {
         val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
         val room = roomClient.getRoom(vote.roomId)
         when (action) {
@@ -53,7 +53,7 @@ class VoteServiceImpl(
 
 
     override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId)  }
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
         vote.addVotePaper(userId, voteResultType)
     }
 
@@ -64,8 +64,13 @@ class VoteServiceImpl(
     }
 
     override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId)  }
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
         val room = roomClient.getRoom(vote.roomId)
         return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
+    }
+
+    override fun resetVote(voteId: Long) {
+        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
+        vote.resetVote()
     }
 }

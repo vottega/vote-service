@@ -68,6 +68,7 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
     fun resetVote() {
         if (status == VoteStatus.STARTED) {
             votePaperList.forEach { it.voteResultType = VotePaperType.NOT_VOTED }
+            status = VoteStatus.CREATED
         } else {
             throw VoteStatusConflictException("투표가 진행 중이지 않습니다.")
         }
