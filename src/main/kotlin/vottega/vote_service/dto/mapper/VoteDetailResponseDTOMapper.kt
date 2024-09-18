@@ -10,8 +10,38 @@ import vottega.vote_service.dto.VoteDetailResponseDTO
 @Service
 class VoteDetailResponseDTOMapper {
     fun toVoteDetailResponse(vote: Vote, room: RoomResponseDTO): VoteDetailResponseDTO {
-        val participantMap = room.participants.associateBy { it.id }
+        if(vote.isSecret){
+            return VoteDetailResponseDTO(
+                id = vote.id,
+                title = vote.title,
+                status = vote.status,
+                createdAt = vote.createdAt,
+                startedAt = vote.startedAt,
+                finishedAt = vote.finishedAt,
+                passRate = vote.passRate,
+                result = vote.result,
+                yesList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.YES }.size) { index ->
+                    ParticipantResponseDTO(
+                        id = null,
+                        name = "anonymous user$index"
+                    )
+                },
+                noList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.NO }.size) { index ->
+                    ParticipantResponseDTO(
+                        id = null,
+                        name = "anonymous user$index"
+                    )
+                },
+                abstainList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.ABSTAIN }.size) { index ->
+                    ParticipantResponseDTO(
+                        id = null,
+                        name = "anonymous user$index"
+                    )
+                },
+            )
+        }
 
+        val participantMap = room.participants.associateBy { it.id }
         return VoteDetailResponseDTO(
             id = vote.id,
             title = vote.title,
