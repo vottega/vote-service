@@ -10,12 +10,15 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-class Vote(title: String, val roomId: Long, passRate: FractionVO) {
+class Vote(title: String, val roomId: Long, passRate: FractionVO, isSecret : Boolean) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
     var title: String = title
+        private set
+
+    var isSecret: Boolean = isSecret
         private set
 
     @OneToMany(mappedBy = "vote", orphanRemoval = true, cascade = [CascadeType.ALL])
@@ -37,6 +40,15 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO) {
 
     var result: VoteResultType = VoteResultType.NOT_DECIDED
         private set
+
+    fun update(title: String, passRate: FractionVO, isSecret: Boolean) {
+        if(status != VoteStatus.CREATED) {
+            throw VoteStatusConflictException("투표가 진행 중이라 수정할 수 없습니다.")
+        }
+        this.title = title
+        this.passRate = passRate
+        this.isSecret = isSecret
+    }
 
     fun startVote(room: RoomResponseDTO) {
         if (status == VoteStatus.CREATED) {

@@ -26,19 +26,25 @@ class VoteServiceImpl(
 ) : VoteService {
     override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
-        val fraction = if (voteRequestDTO.passRateNumerator != null && voteRequestDTO.passRateDenominator != null) {
-            FractionVO(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator)
-        } else {
-            FractionVO(1, 2)
-        }
         val vote = Vote(
             title = voteRequestDTO.title,
             roomId = roomId,
-            fraction
+            getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+            isSecret = voteRequestDTO.isSecret ?: false
         )
         val createdVote = voteRepository.save(vote)
         return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote, room)
     }
+
+    override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
+        val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
+        vote.update(
+            voteRequestDTO.title,
+            getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+            voteRequestDTO.isSecret ?: false
+        )
+    }
+
 
     override fun editVoteStatus(voteId: Long, action: String): VoteDetailResponseDTO {
         val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
@@ -72,5 +78,13 @@ class VoteServiceImpl(
     override fun resetVote(voteId: Long) {
         val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
         vote.resetVote()
+    }
+
+    private fun getDefaultFraction(passRateNumerator: Int?, passRateDenominator: Int?): FractionVO {
+        return if (passRateNumerator != null && passRateDenominator != null) {
+            FractionVO(passRateNumerator, passRateDenominator)
+        } else {
+            FractionVO(1, 2)
+        }
     }
 }
