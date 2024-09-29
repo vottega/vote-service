@@ -10,7 +10,7 @@ class VoteResponseDTOMapper {
     fun mapToResponse(vote: Vote): VoteResponseDTO {
         return VoteResponseDTO(
             id = vote.id,
-            title = vote.title,
+            title = vote.voteName,
             status = vote.status,
             createdAt = vote.createdAt,
             yesNum = vote.votePaperList.count { it.voteResultType == VotePaperType.YES },

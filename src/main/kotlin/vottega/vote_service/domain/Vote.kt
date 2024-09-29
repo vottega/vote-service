@@ -10,12 +10,22 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
-class Vote(title: String, val roomId: Long, passRate: FractionVO, isSecret : Boolean) {
+class Vote(
+    agendaName: String,
+    voteName: String,
+    val roomId: Long,
+    passRate: FractionVO,
+    isSecret: Boolean,
+    reservedStartTime: LocalDateTime? = LocalDateTime.now(),
+    minParticipantNumber : Int = 0,
+    minParticipantRate : FractionVO = FractionVO(1,1)
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 
-    var title: String = title
+    var agendaName: String = agendaName
+    var voteName: String = voteName
         private set
 
     var isSecret: Boolean = isSecret
@@ -24,6 +34,12 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO, isSecret : Boo
     @OneToMany(mappedBy = "vote", orphanRemoval = true, cascade = [CascadeType.ALL])
     var votePaperList: MutableList<VotePaper> = mutableListOf()
         private set
+
+    var reservedStartTime: LocalDateTime? = reservedStartTime
+
+    var minParticipantNumber : Int = minParticipantNumber
+
+    var minParticipantRate : FractionVO = minParticipantRate
     var createdAt: LocalDateTime? = null
         private set
     var lastUpdatedAt: LocalDateTime? = null
@@ -41,19 +57,26 @@ class Vote(title: String, val roomId: Long, passRate: FractionVO, isSecret : Boo
     var result: VoteResultType = VoteResultType.NOT_DECIDED
         private set
 
-    fun update(title: String, passRate: FractionVO, isSecret: Boolean) {
-        if(status != VoteStatus.CREATED) {
+    fun update(agendaName: String?, voteName: String?, passRate: FractionVO?, isSecret: Boolean?, reservedStartTime: LocalDateTime?, minParticipantNumber: Int?, minParticipantRate: FractionVO?) {
+        if (status != VoteStatus.CREATED) {
             throw VoteStatusConflictException("투표가 진행 중이라 수정할 수 없습니다.")
         }
-        this.title = title
-        this.passRate = passRate
-        this.isSecret = isSecret
+        agendaName?.let { this.agendaName = it }
+        voteName?.let { this.voteName = it }
+        passRate?.let { this.passRate = it }
+        isSecret?.let { this.isSecret = it }
+        reservedStartTime?.let { this.reservedStartTime = it }
+        minParticipantNumber?.let { this.minParticipantNumber = it }
+        minParticipantRate?.let { this.minParticipantRate = it }
     }
 
     fun startVote(room: RoomResponseDTO) {
         if (status == VoteStatus.CREATED) {
             room.participants.filter { it.canVote }.forEach {
                 votePaperList.add(VotePaper(it.id, this))
+            }
+            if(votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multipy(room.participants.size)){
+                throw VoteStatusConflictException("참여자 수가 부족합니다.")
             }
             status = VoteStatus.STARTED
             startedAt = LocalDateTime.now()

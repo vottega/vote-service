@@ -27,7 +27,7 @@ class VoteServiceImpl(
     override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
         val vote = Vote(
-            title = voteRequestDTO.title,
+            voteName = voteRequestDTO.title,
             roomId = roomId,
             getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
             isSecret = voteRequestDTO.isSecret ?: false

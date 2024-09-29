@@ -13,7 +13,7 @@ class VoteDetailResponseDTOMapper {
         if(vote.isSecret){
             return VoteDetailResponseDTO(
                 id = vote.id,
-                title = vote.title,
+                title = vote.voteName,
                 status = vote.status,
                 createdAt = vote.createdAt,
                 startedAt = vote.startedAt,
@@ -44,7 +44,7 @@ class VoteDetailResponseDTOMapper {
         val participantMap = room.participants.associateBy { it.id }
         return VoteDetailResponseDTO(
             id = vote.id,
-            title = vote.title,
+            title = vote.voteName,
             status = vote.status,
             createdAt = vote.createdAt,
             startedAt = vote.startedAt,
