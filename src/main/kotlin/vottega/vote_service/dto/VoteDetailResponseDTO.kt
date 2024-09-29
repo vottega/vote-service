@@ -7,12 +7,16 @@ import java.time.LocalDateTime
 
 data class VoteDetailResponseDTO(
     val id: Long?,
-    val title: String,
+    val agendaName : String,
+    val voteName: String,
     val status : VoteStatus,
     val createdAt : LocalDateTime? = null,
     val startedAt : LocalDateTime? = null,
     val finishedAt : LocalDateTime? = null,
     val passRate : FractionVO,
+    val minParticipantNumber : Int,
+    val minParticipantRate : FractionVO,
+    val isSecret : Boolean,
     val result : VoteResultType? = null,
     val yesList : List<ParticipantResponseDTO> = listOf(),
     val noList : List<ParticipantResponseDTO> = listOf(),

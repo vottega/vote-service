@@ -13,12 +13,16 @@ class VoteDetailResponseDTOMapper {
         if(vote.isSecret){
             return VoteDetailResponseDTO(
                 id = vote.id,
-                title = vote.voteName,
+                agendaName = vote.agendaName,
+                voteName = vote.voteName,
                 status = vote.status,
                 createdAt = vote.createdAt,
                 startedAt = vote.startedAt,
                 finishedAt = vote.finishedAt,
                 passRate = vote.passRate,
+                minParticipantNumber = vote.minParticipantNumber,
+                minParticipantRate = vote.minParticipantRate,
+                isSecret = vote.isSecret,
                 result = vote.result,
                 yesList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.YES }.size) { index ->
                     ParticipantResponseDTO(
@@ -44,12 +48,16 @@ class VoteDetailResponseDTOMapper {
         val participantMap = room.participants.associateBy { it.id }
         return VoteDetailResponseDTO(
             id = vote.id,
-            title = vote.voteName,
+            agendaName = vote.agendaName,
+            voteName = vote.voteName,
             status = vote.status,
             createdAt = vote.createdAt,
             startedAt = vote.startedAt,
             finishedAt = vote.finishedAt,
             passRate = vote.passRate,
+            minParticipantNumber = vote.minParticipantNumber,
+            minParticipantRate = vote.minParticipantRate,
+            isSecret = vote.isSecret,
             result = vote.result,
             yesList = vote.votePaperList.filter { it.voteResultType == VotePaperType.YES }.map {
                 ParticipantResponseDTO(
