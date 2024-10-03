@@ -16,9 +16,9 @@ class Vote(
     val roomId: Long,
     passRate: FractionVO,
     isSecret: Boolean,
-    reservedStartTime: LocalDateTime? = LocalDateTime.now(),
-    minParticipantNumber : Int = 0,
-    minParticipantRate : FractionVO = FractionVO(1,1)
+    reservedStartTime: LocalDateTime?,
+    minParticipantNumber: Int?,
+    minParticipantRate: FractionVO?
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +35,11 @@ class Vote(
     var votePaperList: MutableList<VotePaper> = mutableListOf()
         private set
 
-    var reservedStartTime: LocalDateTime? = reservedStartTime
+    var reservedStartTime: LocalDateTime = reservedStartTime ?: LocalDateTime.now()
 
-    var minParticipantNumber : Int = minParticipantNumber
+    var minParticipantNumber: Int = minParticipantNumber ?: 0
 
-    var minParticipantRate : FractionVO = minParticipantRate
+    var minParticipantRate: FractionVO = minParticipantRate ?: FractionVO(1, 1)
     var createdAt: LocalDateTime? = null
         private set
     var lastUpdatedAt: LocalDateTime? = null
@@ -57,7 +57,15 @@ class Vote(
     var result: VoteResultType = VoteResultType.NOT_DECIDED
         private set
 
-    fun update(agendaName: String?, voteName: String?, passRate: FractionVO?, isSecret: Boolean?, reservedStartTime: LocalDateTime?, minParticipantNumber: Int?, minParticipantRate: FractionVO?) {
+    fun update(
+        agendaName: String?,
+        voteName: String?,
+        passRate: FractionVO?,
+        isSecret: Boolean?,
+        reservedStartTime: LocalDateTime?,
+        minParticipantNumber: Int?,
+        minParticipantRate: FractionVO?
+    ) {
         if (status != VoteStatus.CREATED) {
             throw VoteStatusConflictException("투표가 진행 중이라 수정할 수 없습니다.")
         }
@@ -75,7 +83,7 @@ class Vote(
             room.participants.filter { it.canVote }.forEach {
                 votePaperList.add(VotePaper(it.id, this))
             }
-            if(votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multipy(room.participants.size)){
+            if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multipy(room.participants.size)) {
                 throw VoteStatusConflictException("참여자 수가 부족합니다.")
             }
             status = VoteStatus.STARTED

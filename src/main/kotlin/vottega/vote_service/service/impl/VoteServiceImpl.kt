@@ -1,6 +1,7 @@
 package vottega.vote_service.service.impl
 
 import jakarta.transaction.Transactional
+import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import vottega.vote_service.client.RoomClient
 import vottega.vote_service.domain.FractionVO
@@ -23,14 +24,19 @@ class VoteServiceImpl(
     private val roomClient: RoomClient,
     private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
     private val voteResponseDTOMapper: VoteResponseDTOMapper,
+    private val taskScheduler: TaskScheduler
 ) : VoteService {
     override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
         val vote = Vote(
-            voteName = voteRequestDTO.title,
+            voteRequestDTO.agendaName,
+            voteName = voteRequestDTO.voteName,
             roomId = roomId,
             getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
-            isSecret = voteRequestDTO.isSecret ?: false
+            isSecret = voteRequestDTO.isSecret ?: false,
+            reservedStartTime = voteRequestDTO.reservedStartTime,
+            minParticipantNumber = voteRequestDTO.minParticipantNumber,
+            minParticipantRate = voteRequestDTO.minParticipantRate
         )
         val createdVote = voteRepository.save(vote)
         return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote, room)
@@ -39,7 +45,7 @@ class VoteServiceImpl(
     override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
         val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
         vote.update(
-            voteRequestDTO.title,
+            voteRequestDTO.voteName,
             getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
             voteRequestDTO.isSecret ?: false
         )
