@@ -29,10 +29,10 @@ class VoteServiceImpl(
     override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
         val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
         val vote = Vote(
-            voteRequestDTO.agendaName,
+            agendaName = voteRequestDTO.agendaName,
             voteName = voteRequestDTO.voteName,
             roomId = roomId,
-            getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+            passRate = getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
             isSecret = voteRequestDTO.isSecret ?: false,
             reservedStartTime = voteRequestDTO.reservedStartTime,
             minParticipantNumber = voteRequestDTO.minParticipantNumber,
@@ -45,9 +45,13 @@ class VoteServiceImpl(
     override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
         val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
         vote.update(
+            voteRequestDTO.agendaName,
             voteRequestDTO.voteName,
             getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
-            voteRequestDTO.isSecret ?: false
+            voteRequestDTO.isSecret,
+            voteRequestDTO.reservedStartTime,
+            voteRequestDTO.minParticipantNumber,
+            voteRequestDTO.minParticipantRate,
         )
     }
 
@@ -86,11 +90,11 @@ class VoteServiceImpl(
         vote.resetVote()
     }
 
-    private fun getDefaultFraction(passRateNumerator: Int?, passRateDenominator: Int?): FractionVO {
-        return if (passRateNumerator != null && passRateDenominator != null) {
-            FractionVO(passRateNumerator, passRateDenominator)
+    private fun getDefaultFraction(numerator: Int?, denominator: Int?): FractionVO? {
+        return if (numerator != null && denominator != null) {
+            FractionVO(numerator, denominator)
         } else {
-            FractionVO(1, 2)
+            null
         }
     }
 }

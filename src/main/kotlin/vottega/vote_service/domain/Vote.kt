@@ -39,7 +39,7 @@ class Vote(
 
     var minParticipantNumber: Int = minParticipantNumber ?: 0
 
-    var minParticipantRate: FractionVO = minParticipantRate ?: FractionVO(1, 1)
+    var minParticipantRate: FractionVO = minParticipantRate ?: FractionVO(0, 1)
     var createdAt: LocalDateTime? = null
         private set
     var lastUpdatedAt: LocalDateTime? = null
@@ -51,7 +51,7 @@ class Vote(
     var status: VoteStatus = VoteStatus.CREATED
         private set
 
-    var passRate: FractionVO = passRate
+    var passRate: FractionVO = passRate ?: FractionVO(1, 2)
         private set
 
     var result: VoteResultType = VoteResultType.NOT_DECIDED
