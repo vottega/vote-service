@@ -32,7 +32,7 @@ class VoteServiceImpl(
             agendaName = voteRequestDTO.agendaName,
             voteName = voteRequestDTO.voteName,
             roomId = roomId,
-            passRate = getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+            passRate = getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
             isSecret = voteRequestDTO.isSecret ?: false,
             reservedStartTime = voteRequestDTO.reservedStartTime,
             minParticipantNumber = voteRequestDTO.minParticipantNumber,
@@ -47,7 +47,7 @@ class VoteServiceImpl(
         vote.update(
             voteRequestDTO.agendaName,
             voteRequestDTO.voteName,
-            getDefaultFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+            getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
             voteRequestDTO.isSecret,
             voteRequestDTO.reservedStartTime,
             voteRequestDTO.minParticipantNumber,
@@ -90,7 +90,7 @@ class VoteServiceImpl(
         vote.resetVote()
     }
 
-    private fun getDefaultFraction(numerator: Int?, denominator: Int?): FractionVO? {
+    private fun getFraction(numerator: Int?, denominator: Int?): FractionVO? {
         return if (numerator != null && denominator != null) {
             FractionVO(numerator, denominator)
         } else {
