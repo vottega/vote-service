@@ -14,7 +14,7 @@ class Vote(
     agendaName: String,
     voteName: String,
     val roomId: Long,
-    passRate: FractionVO,
+    passRate: FractionVO?,
     isSecret: Boolean,
     reservedStartTime: LocalDateTime?,
     minParticipantNumber: Int?,
