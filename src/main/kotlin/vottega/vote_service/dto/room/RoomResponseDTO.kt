@@ -1,11 +1,14 @@
-package vottega.room_service.dto
+package vottega.vote_service.dto.room
 
 import java.time.LocalDateTime
 
 data class RoomResponseDTO(
     val id: Long,
     val name: String,
-    val participants: List<ParticipantDetailResponseDTO>,
+    val ownerId: Long,
+    val status: RoomStatus,
+    val participants: List<ParticipantResponseDTO>,
+    val roles: List<ParticipantRoleDTO>,
     val createdAt: LocalDateTime,
     val lastUpdatedAt: LocalDateTime,
     val startedAt: LocalDateTime?,

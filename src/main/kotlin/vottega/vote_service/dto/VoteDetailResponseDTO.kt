@@ -3,6 +3,7 @@ package vottega.vote_service.dto
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.enum.VoteResultType
 import vottega.vote_service.domain.enum.VoteStatus
+import vottega.vote_service.dto.room.ParticipantResponseDTO
 import java.time.LocalDateTime
 
 data class VoteDetailResponseDTO(

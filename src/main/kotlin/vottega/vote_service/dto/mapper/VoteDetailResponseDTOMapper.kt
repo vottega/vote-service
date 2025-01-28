@@ -1,10 +1,10 @@
 package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Service
-import vottega.room_service.dto.RoomResponseDTO
+import vottega.vote_service.dto.room.RoomResponseDTO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.VotePaperType
-import vottega.vote_service.dto.ParticipantResponseDTO
+import vottega.vote_service.dto.room.ParticipantResponseDTO
 import vottega.vote_service.dto.VoteDetailResponseDTO
 
 @Service

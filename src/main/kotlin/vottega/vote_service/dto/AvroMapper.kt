@@ -2,7 +2,7 @@ import vottega.vote_service.avro.VoteDetailResponseDTO as AvroVoteDetailResponse
 import vottega.vote_service.avro.ParticipantResponseDTO as AvroParticipantResponseDTO
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.dto.VoteDetailResponseDTO
-import vottega.vote_service.dto.ParticipantResponseDTO
+import vottega.vote_service.dto.room.ParticipantResponseDTO
 import java.time.ZoneOffset
 
 class AvroMapper {
