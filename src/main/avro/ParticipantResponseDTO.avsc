@@ -1,9 +1,0 @@
-{
-  "type": "record",
-  "name": "ParticipantResponseDTO",
-  "namespace": "vottega.vote_service.avro",
-  "fields": [
-    {"name": "id", "type": ["null", "string"], "logicalType": "uuid", "default": null},
-    {"name": "name", "type": ["null", "string"], "default": null}
-  ]
-}

@@ -1,0 +1,100 @@
+{
+  "type": "record",
+  "name": "ParticipantAvro",
+  "namespace": "vottega.room_service.avro",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "roomId",
+      "type": "long"
+    },
+    {
+      "name": "position",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "action",
+      "type": {
+        "type": "enum",
+        "name": "Action",
+        "symbols": [
+          "ENTER",
+          "EXIT",
+          "EDIT",
+          "ADD",
+          "DELETE"
+        ]
+      }
+    },
+    {
+      "name": "role",
+      "type": "ParticipantRoleAvro"
+    },
+    {
+      "name": "isEntered",
+      "type": "boolean"
+    },
+    {
+      "name": "phoneNumber",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    },
+    {
+      "name": "createdAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "enteredAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "lastUpdatedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "deletedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    }
+  ]
+}
