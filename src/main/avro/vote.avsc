@@ -1,0 +1,111 @@
+{
+  "type": "record",
+  "name": "VoteAvro",
+  "namespace": "vottega.vote_service.avro",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "voteName",
+      "type": "string"
+    },
+    {
+      "name": "voteAction",
+      "type": {
+        "type": "enum",
+        "name": "VoteAction",
+        "symbols": [
+          "EDIT",
+          "STATUS_CHANGE",
+          "RESET"
+        ]
+      }
+    },
+    {
+      "name": "voteStatus",
+      "type": {
+        "type": "enum",
+        "name": "VoteStatus",
+        "symbols": [
+          "CREATED",
+          "STARTED",
+          "ENDED"
+        ]
+      }
+    },
+    {
+      "name": "isSecret",
+      "type": "boolean"
+    },
+    {
+      "name": "passRate",
+      "type": "FractionAvro"
+    },
+    {
+      "name": "reservedStartTime",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "minParticipantNumber",
+      "type": "int",
+      "default": 0
+    },
+    {
+      "name": "minParticipantRate",
+      "type": "FractionAvro"
+    },
+    {
+      "name": "createdAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "lastUpdatedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "startedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "finishedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    }
+  ]
+}

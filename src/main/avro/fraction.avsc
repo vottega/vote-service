@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "FractionAvro",
+  "namespace": "vottega.vote_service.avro",
+  "fields": [
+    {
+      "name": "numerator",
+      "type": "int",
+      "default": 1
+    },
+    {
+      "name": "denominator",
+      "type": "int",
+      "default": 1
+    }
+  ]
+}

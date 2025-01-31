@@ -1,0 +1,50 @@
+{
+  "type": "record",
+  "name": "VotePaperAvro",
+  "namespace": "vottega.vote_service.avro",
+  "fields": [
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "userName",
+      "type": "string"
+    },
+    {
+      "name": "votePaperType",
+      "type": {
+        "type": "enum",
+        "name": "VotePaperType",
+        "symbols": [
+          "YES",
+          "NO",
+          "ABSTAIN",
+          "NOT_VOTED"
+        ]
+      }
+    },
+    {
+      "name": "createdAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "votedAt",
+      "type": [
+        "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }
+      ],
+      "default": null
+    }
+  ]
+}
