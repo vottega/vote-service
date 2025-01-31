@@ -11,7 +11,7 @@ import java.util.*
 
 @Entity
 class Vote(
-  agendaName: String,
+  var agendaName: String,
   voteName: String,
   val roomId: Long,
   passRate: FractionVO?,
@@ -24,7 +24,6 @@ class Vote(
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   var id: Long? = null
 
-  var agendaName: String = agendaName
   var voteName: String = voteName
     private set
 
@@ -81,7 +80,7 @@ class Vote(
   fun startVote(room: RoomResponseDTO) {
     if (status == VoteStatus.CREATED) {
       room.participants.filter { it.participantRole.canVote }.forEach {
-        votePaperList.add(VotePaper(it.id, this))
+        votePaperList.add(VotePaper(it.id, this, it.name))
       }
       if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multipy(room.participants.size)) {
         throw VoteStatusConflictException("참여자 수가 부족합니다.")

@@ -1,12 +1,12 @@
 package vottega.vote_service.service.impl
 
 import jakarta.transaction.Transactional
-import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import vottega.vote_service.client.RoomClient
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.VotePaperType
+import vottega.vote_service.domain.enum.VoteStatus
 import vottega.vote_service.dto.VoteDetailResponseDTO
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
@@ -15,86 +15,96 @@ import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
 import vottega.vote_service.exception.VoteNotFoundException
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.VoteService
+import vottega.vote_service.service.cache.RoomOwnerService
+import vottega.vote_service.service.cache.RoomParticipantService
 import java.util.*
 
 @Service
 @Transactional
 class VoteServiceImpl(
-    private val voteRepository: VoteRepository,
-    private val roomClient: RoomClient,
-    private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
-    private val voteResponseDTOMapper: VoteResponseDTOMapper,
-    private val taskScheduler: TaskScheduler
+  private val voteRepository: VoteRepository,
+  private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
+  private val voteResponseDTOMapper: VoteResponseDTOMapper,
+  private val roomOwnerService: RoomOwnerService,
+  private val roomParticipantService: RoomParticipantService,
+  private val roomClient: RoomClient
 ) : VoteService {
-    override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
-        val room = roomClient.getRoom(roomId) //TODO 404 에러같은 예외 처리
-        val vote = Vote(
-            agendaName = voteRequestDTO.agendaName,
-            voteName = voteRequestDTO.voteName,
-            roomId = roomId,
-            passRate = getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
-            isSecret = voteRequestDTO.isSecret ?: false,
-            reservedStartTime = voteRequestDTO.reservedStartTime,
-            minParticipantNumber = voteRequestDTO.minParticipantNumber,
-            minParticipantRate = voteRequestDTO.minParticipantRate
-        )
-        val createdVote = voteRepository.save(vote)
-        return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote, room)
+  // TODO 방장인지 확인하는 security 로직 추가
+  override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
+    val vote = Vote(
+      agendaName = voteRequestDTO.agendaName,
+      voteName = voteRequestDTO.voteName,
+      roomId = roomId,
+      passRate = getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+      isSecret = voteRequestDTO.isSecret ?: false,
+      reservedStartTime = voteRequestDTO.reservedStartTime,
+      minParticipantNumber = voteRequestDTO.minParticipantNumber,
+      minParticipantRate = voteRequestDTO.minParticipantRate
+    )
+    val createdVote = voteRepository.save(vote)
+    return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote)
+  }
+
+
+  // TODO 방장인지 확인하는 security 로직 추가
+  override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
+    val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
+    vote.update(
+      voteRequestDTO.agendaName,
+      voteRequestDTO.voteName,
+      getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+      voteRequestDTO.isSecret,
+      voteRequestDTO.reservedStartTime,
+      voteRequestDTO.minParticipantNumber,
+      voteRequestDTO.minParticipantRate,
+    )
+  }
+
+
+  // TODO 방장인지 확인하는 security 로직 추가
+  override fun editVoteStatus(voteId: Long, action: VoteStatus): VoteDetailResponseDTO { // TODO Enum으로 변경
+    val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
+    when (action) {
+      VoteStatus.STARTED -> vote.startVote(roomClient.getRoom(vote.roomId))
+      VoteStatus.ENDED -> vote.endVote()
+      else -> throw IllegalArgumentException("Invalid Action")
     }
+    return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
+  }
 
-    override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
-        val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
-        vote.update(
-            voteRequestDTO.agendaName,
-            voteRequestDTO.voteName,
-            getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
-            voteRequestDTO.isSecret,
-            voteRequestDTO.reservedStartTime,
-            voteRequestDTO.minParticipantNumber,
-            voteRequestDTO.minParticipantRate,
-        )
+
+  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
+    val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
+    vote.addVotePaper(userId, voteResultType)
+  }
+
+
+  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  override fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
+    return voteRepository.findByRoomId(roomId).map {
+      voteResponseDTOMapper.mapToResponse(it)
     }
+  }
 
+  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
+    val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
+    val room = roomClient.getRoom(vote.roomId)
+    return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
+  }
 
-    override fun editVoteStatus(voteId: Long, action: String): VoteDetailResponseDTO {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-        val room = roomClient.getRoom(vote.roomId)
-        when (action) {
-            "start" -> vote.startVote(room)
-            "end" -> vote.endVote()
-            else -> throw IllegalArgumentException("Invalid Action")
-        }
-        return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
+  // TODO 방장인지 확인하는 security 로직 추가
+  override fun resetVote(voteId: Long) {
+    val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
+    vote.resetVote()
+  }
+
+  private fun getFraction(numerator: Int?, denominator: Int?): FractionVO? {
+    return if (numerator != null && denominator != null) {
+      FractionVO(numerator, denominator)
+    } else {
+      null
     }
-
-
-    override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-        vote.addVotePaper(userId, voteResultType)
-    }
-
-    override fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
-        return voteRepository.findByRoomId(roomId).map {
-            voteResponseDTOMapper.mapToResponse(it)
-        }
-    }
-
-    override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-        val room = roomClient.getRoom(vote.roomId)
-        return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
-    }
-
-    override fun resetVote(voteId: Long) {
-        val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-        vote.resetVote()
-    }
-
-    private fun getFraction(numerator: Int?, denominator: Int?): FractionVO? {
-        return if (numerator != null && denominator != null) {
-            FractionVO(numerator, denominator)
-        } else {
-            null
-        }
-    }
+  }
 }
