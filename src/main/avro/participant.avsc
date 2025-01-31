@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "ParticipantAvro",
-  "namespace": "vottega.room_service.avro",
+  "namespace": "vottega.vote_service.avro",
   "fields": [
     {
       "name": "id",
