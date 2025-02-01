@@ -8,6 +8,10 @@
       "type": "long"
     },
     {
+      "name": "agendaName",
+      "type": "string"
+    },
+    {
       "name": "voteName",
       "type": "string"
     },
@@ -106,6 +110,18 @@
         }
       ],
       "default": null
+    },
+    {
+      "name": "voteResult",
+      "type": {
+        "type": "enum",
+        "name": "Result",
+        "symbols": [
+          "PASSED",
+          "REJECTED",
+          "NOT_DECIDED"
+        ]
+      }
     }
   ]
 }

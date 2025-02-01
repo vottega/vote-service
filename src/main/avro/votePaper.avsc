@@ -8,6 +8,13 @@
       "type": "long"
     },
     {
+      "name": "userId",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
       "name": "userName",
       "type": "string"
     },
