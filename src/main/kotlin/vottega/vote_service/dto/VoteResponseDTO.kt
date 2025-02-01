@@ -1,22 +1,26 @@
 package vottega.vote_service.dto
 
 import vottega.vote_service.domain.FractionVO
-import vottega.vote_service.domain.enum.VoteResultType
-import vottega.vote_service.domain.enum.VoteStatus
+import vottega.vote_service.domain.enum.Status
+import vottega.vote_service.domain.enum.VoteResult
 import java.time.LocalDateTime
 
 data class VoteResponseDTO(
   val id: Long,
   val agendaName: String,
   val voteName: String,
-  val status: VoteStatus,
+  val status: Status,
   val passRate: FractionVO,
   val minParticipantNumber: Int,
   val minParticipantRate: FractionVO,
+  val reservedStartTime: LocalDateTime,
   val isSecret: Boolean,
   val yesNum: Int,
   val noNum: Int,
   val abstainNum: Int,
   val createdAt: LocalDateTime,
-  val result: VoteResultType? = null
+  val result: VoteResult,
+  val startedAt: LocalDateTime? = null,
+  val finishedAt: LocalDateTime? = null,
+  val lastUpdatedAt: LocalDateTime,
 )

@@ -1,8 +1,8 @@
 package vottega.vote_service.dto
 
 import vottega.vote_service.domain.FractionVO
-import vottega.vote_service.domain.enum.VoteResultType
-import vottega.vote_service.domain.enum.VoteStatus
+import vottega.vote_service.domain.enum.Status
+import vottega.vote_service.domain.enum.VoteResult
 import java.time.LocalDateTime
 import java.util.*
 
@@ -10,7 +10,7 @@ data class VoteDetailResponseDTO(
   val id: Long?,
   val agendaName: String,
   val voteName: String,
-  val status: VoteStatus,
+  val status: Status,
   val createdAt: LocalDateTime? = null,
   val startedAt: LocalDateTime? = null,
   val finishedAt: LocalDateTime? = null,
@@ -18,7 +18,7 @@ data class VoteDetailResponseDTO(
   val minParticipantNumber: Int,
   val minParticipantRate: FractionVO,
   val isSecret: Boolean,
-  val result: VoteResultType? = null,
+  val result: VoteResult? = null,
   val yesList: List<ParticipantIdNameDTO> = listOf(),
   val noList: List<ParticipantIdNameDTO> = listOf(),
   val abstainList: List<ParticipantIdNameDTO> = listOf(),
