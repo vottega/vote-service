@@ -26,7 +26,7 @@ class VotePaper(
   var votedAt: LocalDateTime? = null
     private set
 
-  var voteResultType: VotePaperType = VotePaperType.NOT_VOTED
+  var votePaperType: VotePaperType = VotePaperType.NOT_VOTED
 
   @PrePersist
   private fun prePersist() {
@@ -34,7 +34,7 @@ class VotePaper(
   }
 
   fun vote(voteResultType: VotePaperType) {
-    this.voteResultType = voteResultType
+    this.votePaperType = voteResultType
     this.votedAt = LocalDateTime.now()
   }
 }
