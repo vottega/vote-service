@@ -23,19 +23,19 @@ class VoteDetailResponseDTOMapper {
         minParticipantRate = vote.minParticipantRate,
         isSecret = vote.isSecret,
         result = vote.result,
-        yesList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.YES }.size) { index ->
+        yesList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.YES }.size) { index ->
           ParticipantIdNameDTO(
             id = null,
             name = "anonymous user$index"
           )
         },
-        noList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.NO }.size) { index ->
+        noList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.NO }.size) { index ->
           ParticipantIdNameDTO(
             id = null,
             name = "anonymous user$index"
           )
         },
-        abstainList = List(vote.votePaperList.filter { it.voteResultType == VotePaperType.ABSTAIN }.size) { index ->
+        abstainList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.ABSTAIN }.size) { index ->
           ParticipantIdNameDTO(
             id = null,
             name = "anonymous user$index"
@@ -57,19 +57,19 @@ class VoteDetailResponseDTOMapper {
       minParticipantRate = vote.minParticipantRate,
       isSecret = vote.isSecret,
       result = vote.result,
-      yesList = vote.votePaperList.filter { it.voteResultType == VotePaperType.YES }.map {
+      yesList = vote.votePaperList.filter { it.votePaperType == VotePaperType.YES }.map {
         ParticipantIdNameDTO(
           id = it.userId,
           name = it.userName
         )
       },
-      noList = vote.votePaperList.filter { it.voteResultType == VotePaperType.NO }.map {
+      noList = vote.votePaperList.filter { it.votePaperType == VotePaperType.NO }.map {
         ParticipantIdNameDTO(
           id = it.userId,
           name = it.userName
         )
       },
-      abstainList = vote.votePaperList.filter { it.voteResultType == VotePaperType.ABSTAIN }.map {
+      abstainList = vote.votePaperList.filter { it.votePaperType == VotePaperType.ABSTAIN }.map {
         ParticipantIdNameDTO(
           id = it.userId,
           name = it.userName
