@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service
 import vottega.vote_service.client.RoomClient
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
+import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType
-import vottega.vote_service.domain.enum.VoteStatus
 import vottega.vote_service.dto.VoteDetailResponseDTO
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
@@ -62,11 +62,11 @@ class VoteServiceImpl(
 
 
   // TODO 방장인지 확인하는 security 로직 추가
-  override fun editVoteStatus(voteId: Long, action: VoteStatus): VoteDetailResponseDTO { // TODO Enum으로 변경
+  override fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO { // TODO Enum으로 변경
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     when (action) {
-      VoteStatus.STARTED -> vote.startVote(roomClient.getRoom(vote.roomId))
-      VoteStatus.ENDED -> vote.endVote()
+      Status.STARTED -> vote.startVote(roomClient.getRoom(vote.roomId))
+      Status.ENDED -> vote.endVote()
       else -> throw IllegalArgumentException("Invalid Action")
     }
     return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
@@ -83,7 +83,7 @@ class VoteServiceImpl(
   // TODO 방에 있는 사람인지 확인하는 security 로직 추가
   override fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
     return voteRepository.findByRoomId(roomId).map {
-      voteResponseDTOMapper.mapToResponse(it)
+      voteResponseDTOMapper.toVoteResponseDTO(it)
     }
   }
 
