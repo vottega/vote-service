@@ -1,7 +1,8 @@
-package vottega.room_service.dto.mapper
+package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.room_service.avro.ParticipantAvro
+import vottega.vote_service.avro.ParticipantAvro
+import vottega.vote_service.dto.mapper.ParticipantRoleMapper
 import vottega.vote_service.dto.room.ParticipantResponseDTO
 import java.time.ZoneId
 

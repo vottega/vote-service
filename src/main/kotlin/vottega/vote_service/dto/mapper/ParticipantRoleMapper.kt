@@ -1,4 +1,4 @@
-package vottega.room_service.dto.mapper
+package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
 import vottega.room_service.avro.ParticipantRoleAvro

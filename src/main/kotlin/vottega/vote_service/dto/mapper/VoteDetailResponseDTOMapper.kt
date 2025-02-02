@@ -1,12 +1,12 @@
 package vottega.vote_service.dto.mapper
 
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.ParticipantIdNameDTO
 import vottega.vote_service.dto.VoteDetailResponseDTO
 
-@Service
+@Component
 class VoteDetailResponseDTOMapper {
   fun toVoteDetailResponse(vote: Vote): VoteDetailResponseDTO {
     if (vote.isSecret) {
