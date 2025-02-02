@@ -8,6 +8,10 @@
       "type": "long"
     },
     {
+      "name": "roomId",
+      "type": "long"
+    },
+    {
       "name": "agendaName",
       "type": "string"
     },
