@@ -8,6 +8,10 @@
       "type": "long"
     },
     {
+      "name": "voteId",
+      "type": "long"
+    },
+    {
       "name": "userId",
       "type": {
         "type": "string",
