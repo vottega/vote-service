@@ -17,6 +17,7 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
   fun toVoteResponseDTO(vote: Vote): VoteResponseDTO {
     return VoteResponseDTO(
       id = vote.id ?: throw IllegalStateException("Vote ID is null"),
+      roomId = vote.roomId,
       agendaName = vote.agendaName,
       voteName = vote.voteName,
       status = vote.status,
@@ -39,6 +40,7 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
   fun toVoteAvro(voteResponseDTO: VoteResponseDTO, voteAction: VoteAction): VoteAvro {
     return VoteAvro.newBuilder()
       .setId(voteResponseDTO.id)
+      .setRoomId(voteResponseDTO.roomId)
       .setAgendaName(voteResponseDTO.agendaName)
       .setVoteName(voteResponseDTO.voteName)
       .setVoteStatus(statusToVoteStatus(voteResponseDTO.status))
