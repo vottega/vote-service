@@ -37,4 +37,9 @@ class RoomParticipantService(
     redisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .delete("room-participant:$roomId", participantId.toString())
   }
+
+  fun addRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
+    redisTemplate.opsForHash<String, ParticipantResponseDTO>()
+      .put("room-participant:$roomId", participant.id.toString(), participant)
+  }
 }
