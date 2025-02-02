@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 
 data class VoteResponseDTO(
   val id: Long,
+  val roomId: Long,
   val agendaName: String,
   val voteName: String,
   val status: Status,
