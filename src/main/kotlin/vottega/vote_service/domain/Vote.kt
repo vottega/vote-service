@@ -38,6 +38,11 @@ class Vote(
 
   var minParticipantNumber: Int = minParticipantNumber ?: 0
 
+  @Embedded
+  @AttributeOverrides(
+    AttributeOverride(name = "numerator", column = Column(name = "min_participant_rate_numerator")),
+    AttributeOverride(name = "denominator", column = Column(name = "min_participant_rate_denominator"))
+  )
   var minParticipantRate: FractionVO = minParticipantRate ?: FractionVO(0, 1)
   var createdAt: LocalDateTime? = null
     private set
@@ -50,6 +55,11 @@ class Vote(
   var status: Status = Status.CREATED
     private set
 
+  @Embedded
+  @AttributeOverrides(
+    AttributeOverride(name = "numerator", column = Column(name = "pass_rate_numerator")),
+    AttributeOverride(name = "denominator", column = Column(name = "pass_rate_denominator"))
+  )
   var passRate: FractionVO = passRate ?: FractionVO(1, 2)
     private set
 
