@@ -34,15 +34,16 @@ dependencyManagement {
 
 repositories {
   mavenCentral()
+  maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
-  implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.springframework.kafka:spring-kafka")
   compileOnly("org.projectlombok:lombok")
