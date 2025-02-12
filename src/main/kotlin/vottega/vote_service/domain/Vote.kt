@@ -92,7 +92,7 @@ class Vote(
       room.participants.filter { it.participantRole.canVote }.forEach {
         votePaperList.add(VotePaper(it.id, this, it.name))
       }
-      if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multipy(room.participants.size)) {
+      if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multiply(room.participants.size)) {
         throw VoteStatusConflictException("참여자 수가 부족합니다.")
       }
       status = Status.STARTED
@@ -107,7 +107,7 @@ class Vote(
       status = Status.ENDED
       finishedAt = LocalDateTime.now()
       val yesNum = votePaperList.count { it.votePaperType == VotePaperType.YES }
-      if (yesNum >= passRate.multipy(votePaperList.size)) {
+      if (yesNum >= passRate.multiply(votePaperList.size)) {
         result = VoteResult.PASSED
       } else {
         result = VoteResult.REJECTED
