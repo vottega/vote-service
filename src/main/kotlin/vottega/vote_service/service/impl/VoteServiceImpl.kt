@@ -91,7 +91,7 @@ class VoteServiceImpl(
   override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     val room = roomClient.getRoom(vote.roomId)
-    return voteDetailResponseDTOMapper.toVoteDetailResponse(vote, room)
+    return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
   }
 
   // TODO 방장인지 확인하는 security 로직 추가
