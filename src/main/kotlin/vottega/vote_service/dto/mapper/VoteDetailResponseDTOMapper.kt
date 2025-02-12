@@ -11,11 +11,11 @@ class VoteDetailResponseDTOMapper {
   fun toVoteDetailResponse(vote: Vote): VoteDetailResponseDTO {
     if (vote.isSecret) {
       return VoteDetailResponseDTO(
-        id = vote.id,
+        id = vote.id ?: throw IllegalStateException("Vote ID is null"),
         agendaName = vote.agendaName,
         voteName = vote.voteName,
         status = vote.status,
-        createdAt = vote.createdAt,
+        createdAt = vote.createdAt ?: throw IllegalStateException("createdAt is null"),
         startedAt = vote.startedAt,
         finishedAt = vote.finishedAt,
         passRate = vote.passRate,
@@ -45,11 +45,11 @@ class VoteDetailResponseDTOMapper {
     }
 
     return VoteDetailResponseDTO(
-      id = vote.id,
+      id = vote.id ?: throw IllegalStateException("Vote ID is null"),
       agendaName = vote.agendaName,
       voteName = vote.voteName,
       status = vote.status,
-      createdAt = vote.createdAt,
+      createdAt = vote.createdAt ?: throw IllegalStateException("createdAt is null"),
       startedAt = vote.startedAt,
       finishedAt = vote.finishedAt,
       passRate = vote.passRate,
