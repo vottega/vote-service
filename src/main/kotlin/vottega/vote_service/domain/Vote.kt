@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.domain.enum.VoteResult
-import vottega.vote_service.dto.room.RoomResponseDTO
+import vottega.vote_service.dto.room.ParticipantResponseDTO
 import vottega.vote_service.exception.VoteStatusConflictException
 import java.time.LocalDateTime
 import java.util.*
@@ -87,9 +87,9 @@ class Vote(
     minParticipantRate?.let { this.minParticipantRate = it }
   }
 
-  fun startVote(room: RoomResponseDTO) {
+  fun startVote(participantList: List<ParticipantResponseDTO>) {
     if (status == Status.CREATED) {
-      room.participants.filter { it.participantRole.canVote }.forEach {
+      participantList.filter { it.participantRole.canVote }.forEach {
         votePaperList.add(VotePaper(it.id, this, it.name))
       }
       if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multiply(room.participants.size)) {
@@ -126,7 +126,7 @@ class Vote(
     }
   }
 
-  fun addVotePaper(userId: UUID, voteResultType: VotePaperType) {
+  fun addVotePaper(userId: UUID, voteResultType: VotePaperType): VotePaper {
     if (status != Status.STARTED) {
       throw VoteStatusConflictException("투표가 시작되지 않았습니다.")
     }
@@ -136,7 +136,7 @@ class Vote(
         throw VoteStatusConflictException("이미 투표한 사람입니다.")
       } else if (it.userId == userId) {
         it.vote(voteResultType)
-        return
+        return it
       }
     }
   }

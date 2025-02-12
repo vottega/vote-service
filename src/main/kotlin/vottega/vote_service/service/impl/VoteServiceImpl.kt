@@ -2,7 +2,8 @@ package vottega.vote_service.service.impl
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import vottega.vote_service.client.RoomClient
+import vottega.vote_service.adaptor.VoteProducer
+import vottega.vote_service.avro.VoteAction
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.Status
@@ -11,11 +12,11 @@ import vottega.vote_service.dto.VoteDetailResponseDTO
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteResponseDTO
 import vottega.vote_service.dto.mapper.VoteDetailResponseDTOMapper
+import vottega.vote_service.dto.mapper.VotePaperMapper
 import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
 import vottega.vote_service.exception.VoteNotFoundException
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.VoteService
-import vottega.vote_service.service.cache.RoomOwnerService
 import vottega.vote_service.service.cache.RoomParticipantService
 import java.util.*
 
@@ -25,9 +26,9 @@ class VoteServiceImpl(
   private val voteRepository: VoteRepository,
   private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
   private val voteResponseDTOMapper: VoteResponseDTOMapper,
-  private val roomOwnerService: RoomOwnerService,
-  private val roomParticipantService: RoomParticipantService,
-  private val roomClient: RoomClient
+  private val voteProducer: VoteProducer,
+  private val votePaperMapper: VotePaperMapper,
+  private val roomParticipantService: RoomParticipantService
 ) : VoteService {
   // TODO 방장인지 확인하는 security 로직 추가
   override fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
@@ -42,12 +43,16 @@ class VoteServiceImpl(
       minParticipantRate = voteRequestDTO.minParticipantRate
     )
     val createdVote = voteRepository.save(vote)
+    voteProducer.voteUpdatedMessageProduce(
+      voteResponseDTOMapper.toVoteResponseDTO(createdVote),
+      VoteAction.STATUS_CHANGE
+    )
     return voteDetailResponseDTOMapper.toVoteDetailResponse(createdVote)
   }
 
 
   // TODO 방장인지 확인하는 security 로직 추가
-  override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO) {
+  override fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
     val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
     vote.update(
       voteRequestDTO.agendaName,
@@ -58,6 +63,8 @@ class VoteServiceImpl(
       voteRequestDTO.minParticipantNumber,
       voteRequestDTO.minParticipantRate,
     )
+    voteProducer.voteUpdatedMessageProduce(voteResponseDTOMapper.toVoteResponseDTO(vote), VoteAction.EDIT)
+    return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
   }
 
 
@@ -65,10 +72,12 @@ class VoteServiceImpl(
   override fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO { // TODO Enum으로 변경
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     when (action) {
-      Status.STARTED -> vote.startVote(roomClient.getRoom(vote.roomId))
+      Status.STARTED -> vote.startVote(roomParticipantService.getRoomParticipantList(vote.roomId))
       Status.ENDED -> vote.endVote()
       else -> throw IllegalArgumentException("Invalid Action")
     }
+    val voteDto = voteResponseDTOMapper.toVoteResponseDTO(vote)
+    voteProducer.voteUpdatedMessageProduce(voteDto, VoteAction.STATUS_CHANGE)
     return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
   }
 
@@ -76,7 +85,8 @@ class VoteServiceImpl(
   // TODO 방에 있는 사람인지 확인하는 security 로직 추가
   override fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-    vote.addVotePaper(userId, voteResultType)
+    val addedVotePaper = vote.addVotePaper(userId, voteResultType)
+    voteProducer.votePaperAddedMessageProduce(votePaperMapper.toVotePaperDTO(addedVotePaper))
   }
 
 
@@ -90,7 +100,6 @@ class VoteServiceImpl(
   // TODO 방에 있는 사람인지 확인하는 security 로직 추가
   override fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-    val room = roomClient.getRoom(vote.roomId)
     return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
   }
 
@@ -98,6 +107,7 @@ class VoteServiceImpl(
   override fun resetVote(voteId: Long) {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     vote.resetVote()
+    voteProducer.voteUpdatedMessageProduce(voteResponseDTOMapper.toVoteResponseDTO(vote), VoteAction.RESET)
   }
 
   private fun getFraction(numerator: Int?, denominator: Int?): FractionVO? {
