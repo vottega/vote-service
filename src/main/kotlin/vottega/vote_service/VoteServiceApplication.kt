@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 @SpringBootApplication
 @EnableFeignClients
 @EnableCaching
-class VoteServiceApplication
-
-fun main(args: Array<String>) {
-	runApplication<VoteServiceApplication>(*args)
+class VoteServiceApplication {
+	fun main(args: Array<String>) {
+		runApplication<VoteServiceApplication>(*args)
+	}
 }
