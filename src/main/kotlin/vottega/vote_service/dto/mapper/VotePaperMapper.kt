@@ -26,6 +26,7 @@ class VotePaperMapper {
     return VotePaperAvro.newBuilder()
       .setId(votePaperDTO.votePaperId)
       .setVoteId(votePaperDTO.voteId)
+      .setRoomId(votePaperDTO.roomId)
       .setUserId(votePaperDTO.userId)
       .setUserName(votePaperDTO.userName)
       .setVotePaperType(votePaperTypeToAvroEnum(votePaperDTO.votePaperType))

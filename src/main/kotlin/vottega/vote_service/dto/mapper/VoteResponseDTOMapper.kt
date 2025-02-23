@@ -55,6 +55,9 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
       .setFinishedAt(voteResponseDTO.finishedAt?.atZone(ZoneId.systemDefault())?.toInstant())
       .setLastUpdatedAt(voteResponseDTO.lastUpdatedAt.atZone(ZoneId.systemDefault()).toInstant())
       .setVoteResult(voteResultToResult(voteResponseDTO.result))
+      .setYesNum(voteResponseDTO.yesNum)
+      .setNoNum(voteResponseDTO.noNum)
+      .setAbstainNum(voteResponseDTO.abstainNum)
       .build()
   }
 

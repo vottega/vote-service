@@ -12,6 +12,10 @@
       "type": "long"
     },
     {
+      "name": "roomId",
+      "type": "long"
+    },
+    {
       "name": "userId",
       "type": {
         "type": "string",

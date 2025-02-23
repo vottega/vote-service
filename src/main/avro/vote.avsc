@@ -68,6 +68,21 @@
       "default": 0
     },
     {
+      "name": "yesNum",
+      "type": "int",
+      "default": 0
+    },
+    {
+      "name": "noNum",
+      "type": "int",
+      "default": 0
+    },
+    {
+      "name": "abstainNum",
+      "type": "int",
+      "default": 0
+    },
+    {
       "name": "minParticipantRate",
       "type": "FractionAvro"
     },
