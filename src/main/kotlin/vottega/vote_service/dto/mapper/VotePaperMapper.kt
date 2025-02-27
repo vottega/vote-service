@@ -1,7 +1,7 @@
 package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.vote_service.avro.VotePaperAvro
+import vottega.avro.VotePaperAvro
 import vottega.vote_service.domain.VotePaper
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VotePaperDTO
@@ -35,12 +35,12 @@ class VotePaperMapper {
       .build()
   }
 
-  fun votePaperTypeToAvroEnum(votePaperType: VotePaperType): vottega.vote_service.avro.VotePaperType {
+  fun votePaperTypeToAvroEnum(votePaperType: VotePaperType): vottega.avro.VotePaperType {
     return when (votePaperType) {
-      VotePaperType.YES -> vottega.vote_service.avro.VotePaperType.YES
-      VotePaperType.NO -> vottega.vote_service.avro.VotePaperType.NO
-      VotePaperType.ABSTAIN -> vottega.vote_service.avro.VotePaperType.ABSTAIN
-      VotePaperType.NOT_VOTED -> vottega.vote_service.avro.VotePaperType.NOT_VOTED
+      VotePaperType.YES -> vottega.avro.VotePaperType.YES
+      VotePaperType.NO -> vottega.avro.VotePaperType.NO
+      VotePaperType.ABSTAIN -> vottega.avro.VotePaperType.ABSTAIN
+      VotePaperType.NOT_VOTED -> vottega.avro.VotePaperType.NOT_VOTED
     }
   }
 }

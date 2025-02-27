@@ -1,7 +1,7 @@
 package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
-import vottega.vote_service.avro.FractionAvro
+import vottega.avro.FractionAvro
 import vottega.vote_service.domain.FractionVO
 
 @Component

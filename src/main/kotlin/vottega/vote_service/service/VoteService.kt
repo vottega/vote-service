@@ -2,8 +2,8 @@ package vottega.vote_service.service
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import vottega.avro.VoteAction
 import vottega.vote_service.adaptor.VoteProducer
-import vottega.vote_service.avro.VoteAction
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.Status

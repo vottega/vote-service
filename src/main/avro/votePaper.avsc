@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "VotePaperAvro",
-  "namespace": "vottega.vote_service.avro",
+  "namespace": "vottega.avro",
   "fields": [
     {
       "name": "id",

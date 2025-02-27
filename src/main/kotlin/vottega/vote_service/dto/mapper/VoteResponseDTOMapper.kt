@@ -1,10 +1,10 @@
 package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Service
-import vottega.vote_service.avro.Result
-import vottega.vote_service.avro.VoteAction
-import vottega.vote_service.avro.VoteAvro
-import vottega.vote_service.avro.VoteStatus
+import vottega.avro.Result
+import vottega.avro.VoteAction
+import vottega.avro.VoteAvro
+import vottega.avro.VoteStatus
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType

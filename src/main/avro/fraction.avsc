@@ -1,7 +1,7 @@
 {
   "type": "record",
   "name": "FractionAvro",
-  "namespace": "vottega.vote_service.avro",
+  "namespace": "vottega.avro",
   "fields": [
     {
       "name": "numerator",

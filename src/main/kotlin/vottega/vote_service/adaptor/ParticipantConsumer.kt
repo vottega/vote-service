@@ -2,8 +2,8 @@ package vottega.vote_service.adaptor
 
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
-import vottega.vote_service.avro.Action
-import vottega.vote_service.avro.ParticipantAvro
+import vottega.avro.Action
+import vottega.avro.ParticipantAvro
 import vottega.vote_service.dto.mapper.ParticipantMapper
 import vottega.vote_service.service.cache.RoomParticipantService
 

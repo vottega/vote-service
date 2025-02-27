@@ -1,10 +1,10 @@
-package vottega.vote_service.adaptor.impl
+package vottega.vote_service.adaptor
 
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
-import vottega.vote_service.avro.VoteAction
-import vottega.vote_service.avro.VoteAvro
-import vottega.vote_service.avro.VotePaperAvro
+import vottega.avro.VoteAction
+import vottega.avro.VoteAvro
+import vottega.avro.VotePaperAvro
 import vottega.vote_service.dto.VotePaperDTO
 import vottega.vote_service.dto.VoteResponseDTO
 import vottega.vote_service.dto.mapper.VotePaperMapper
