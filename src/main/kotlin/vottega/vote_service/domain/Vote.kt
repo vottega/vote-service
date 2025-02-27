@@ -5,6 +5,7 @@ import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.domain.enum.VoteResult
 import vottega.vote_service.dto.room.ParticipantResponseDTO
+import vottega.vote_service.exception.VoteForbiddenException
 import vottega.vote_service.exception.VoteStatusConflictException
 import java.time.LocalDateTime
 import java.util.*
@@ -92,7 +93,7 @@ class Vote(
       participantList.filter { it.participantRole.canVote }.forEach {
         votePaperList.add(VotePaper(it.id, this, it.name))
       }
-      if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multiply(room.participants.size)) {
+      if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multiply(participantList.size)) {
         throw VoteStatusConflictException("참여자 수가 부족합니다.")
       }
       status = Status.STARTED
@@ -139,6 +140,7 @@ class Vote(
         return it
       }
     }
+    throw VoteForbiddenException("투표 권한이 없습니다.")
   }
 
   @PrePersist
