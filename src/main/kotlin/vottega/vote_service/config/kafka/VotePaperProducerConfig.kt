@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
-import vottega.vote_service.avro.VotePaperAvro
+import vottega.avro.VotePaperAvro
 
 @Configuration
 class VotePaperProducerConfig(private val kafkaCommonConfig: KafkaCommonConfig) {
