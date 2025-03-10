@@ -1,17 +1,25 @@
-version: '3.8'
 services:
   room-db:
     image: mariadb:latest
     container_name: vote-db
     ports:
-      - "3307:3306" # 호스트 포트:컨테이너 포트
+      - "3307:3306"  # 호스트 포트:컨테이너 포트
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: vote-db
       MYSQL_USER: minguni
       MYSQL_PASSWORD: minguni
     volumes:
-      - vote-db-data:/var/lib/mysql # 데이터를 로컬에 영구 저장
+      - vote-db-data:/var/lib/mysql  # 데이터를 로컬에 영구 저장
+
+  redis:
+    image: redis:latest
+    container_name: vote-redis
+    ports:
+      - "6379:6379"  # Redis 기본 포트 매핑
+    volumes:
+      - redis-data:/data  # Redis 데이터 영구 저장
 
 volumes:
   vote-db-data:
+  redis-data:
