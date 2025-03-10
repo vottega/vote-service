@@ -60,6 +60,12 @@ dependencies {
   implementation("io.confluent:kafka-avro-serializer:7.5.0")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
   implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
+
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+  testImplementation("org.mockito:mockito-core:4.8.0")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+
+  implementation("com.h2database:h2")
 }
 
 kotlin {
