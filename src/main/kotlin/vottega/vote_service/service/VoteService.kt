@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import vottega.avro.VoteAction
 import vottega.vote_service.adaptor.VoteProducer
-import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.Vote
 import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType
@@ -35,7 +34,7 @@ class VoteService(
       agendaName = voteRequestDTO.agendaName,
       voteName = voteRequestDTO.voteName,
       roomId = roomId,
-      passRate = getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+      passRate = voteRequestDTO.minPassRate,
       isSecret = voteRequestDTO.isSecret ?: false,
       reservedStartTime = voteRequestDTO.reservedStartTime,
       minParticipantNumber = voteRequestDTO.minParticipantNumber,
@@ -56,7 +55,7 @@ class VoteService(
     vote.update(
       voteRequestDTO.agendaName,
       voteRequestDTO.voteName,
-      getFraction(voteRequestDTO.passRateNumerator, voteRequestDTO.passRateDenominator),
+      voteRequestDTO.minPassRate,
       voteRequestDTO.isSecret,
       voteRequestDTO.reservedStartTime,
       voteRequestDTO.minParticipantNumber,
@@ -107,13 +106,5 @@ class VoteService(
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     vote.resetVote()
     voteProducer.voteUpdatedMessageProduce(voteResponseDTOMapper.toVoteResponseDTO(vote), VoteAction.RESET)
-  }
-
-  private fun getFraction(numerator: Int?, denominator: Int?): FractionVO? {
-    return if (numerator != null && denominator != null) {
-      FractionVO(numerator, denominator)
-    } else {
-      null
-    }
   }
 }
