@@ -11,4 +11,8 @@ data class FractionVO(val numerator: Int, val denominator: Int) {
   fun multiply(number: Int): Double {
     return (number * numerator).toDouble() / denominator.toDouble()
   }
+
+  fun isEquals(other: FractionVO): Boolean {
+    return numerator == other.numerator && denominator == other.denominator
+  }
 }
