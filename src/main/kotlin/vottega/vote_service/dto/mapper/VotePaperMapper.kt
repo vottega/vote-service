@@ -6,6 +6,7 @@ import vottega.vote_service.domain.VotePaper
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VotePaperDTO
 import java.time.ZoneId
+import java.util.*
 
 @Component
 class VotePaperMapper {
@@ -16,6 +17,19 @@ class VotePaperMapper {
       roomId = votePaper.vote.roomId,
       userId = votePaper.userId,
       userName = votePaper.userName,
+      votePaperType = votePaper.votePaperType,
+      createdAt = votePaper.createdAt ?: throw IllegalStateException("VotePaper's createdAt is null"),
+      votedAt = votePaper.votedAt,
+    )
+  }
+
+  fun toSecretVotePaperDTO(votePaper: VotePaper, index: Int): VotePaperDTO {
+    return VotePaperDTO(
+      votePaperId = votePaper.id ?: throw IllegalStateException("VotePaper's id is null"),
+      voteId = votePaper.vote.id ?: throw IllegalStateException("VotePaper's vote.id is null"),
+      roomId = votePaper.vote.roomId,
+      userId = UUID.randomUUID(),
+      userName = "투표자 $index",
       votePaperType = votePaper.votePaperType,
       createdAt = votePaper.createdAt ?: throw IllegalStateException("VotePaper's createdAt is null"),
       votedAt = votePaper.votedAt,

@@ -19,6 +19,7 @@ data class VoteResponseDTO(
   val yesNum: Int,
   val noNum: Int,
   val abstainNum: Int,
+  val totalNum: Int,
   val createdAt: LocalDateTime,
   val result: VoteResult,
   val startedAt: LocalDateTime? = null,

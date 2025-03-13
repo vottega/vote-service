@@ -2,48 +2,11 @@ package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
 import vottega.vote_service.domain.Vote
-import vottega.vote_service.domain.enum.VotePaperType
-import vottega.vote_service.dto.ParticipantIdNameDTO
 import vottega.vote_service.dto.VoteDetailResponseDTO
 
 @Component
-class VoteDetailResponseDTOMapper {
+class VoteDetailResponseDTOMapper(private val votePaperMapper: VotePaperMapper) {
   fun toVoteDetailResponse(vote: Vote): VoteDetailResponseDTO {
-    if (vote.isSecret) {
-      return VoteDetailResponseDTO(
-        id = vote.id ?: throw IllegalStateException("Vote ID is null"),
-        agendaName = vote.agendaName,
-        voteName = vote.voteName,
-        status = vote.status,
-        createdAt = vote.createdAt ?: throw IllegalStateException("createdAt is null"),
-        startedAt = vote.startedAt,
-        finishedAt = vote.finishedAt,
-        passRate = vote.passRate,
-        minParticipantNumber = vote.minParticipantNumber,
-        minParticipantRate = vote.minParticipantRate,
-        isSecret = vote.isSecret,
-        result = vote.result,
-        yesList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.YES }.size) { index ->
-          ParticipantIdNameDTO(
-            id = null,
-            name = "anonymous user$index"
-          )
-        },
-        noList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.NO }.size) { index ->
-          ParticipantIdNameDTO(
-            id = null,
-            name = "anonymous user$index"
-          )
-        },
-        abstainList = List(vote.votePaperList.filter { it.votePaperType == VotePaperType.ABSTAIN }.size) { index ->
-          ParticipantIdNameDTO(
-            id = null,
-            name = "anonymous user$index"
-          )
-        },
-      )
-    }
-
     return VoteDetailResponseDTO(
       id = vote.id ?: throw IllegalStateException("Vote ID is null"),
       agendaName = vote.agendaName,
@@ -57,23 +20,10 @@ class VoteDetailResponseDTOMapper {
       minParticipantRate = vote.minParticipantRate,
       isSecret = vote.isSecret,
       result = vote.result,
-      yesList = vote.votePaperList.filter { it.votePaperType == VotePaperType.YES }.map {
-        ParticipantIdNameDTO(
-          id = it.userId,
-          name = it.userName
-        )
-      },
-      noList = vote.votePaperList.filter { it.votePaperType == VotePaperType.NO }.map {
-        ParticipantIdNameDTO(
-          id = it.userId,
-          name = it.userName
-        )
-      },
-      abstainList = vote.votePaperList.filter { it.votePaperType == VotePaperType.ABSTAIN }.map {
-        ParticipantIdNameDTO(
-          id = it.userId,
-          name = it.userName
-        )
+      votePaperList = if (vote.isSecret) {
+        vote.votePaperList.mapIndexed { index, votePaper -> votePaperMapper.toSecretVotePaperDTO(votePaper, index) }
+      } else {
+        vote.votePaperList.map { votePaperMapper.toVotePaperDTO(it) }
       },
     )
   }

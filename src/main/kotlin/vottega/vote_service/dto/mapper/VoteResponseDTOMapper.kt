@@ -30,6 +30,7 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
       yesNum = vote.votePaperList.count { it.votePaperType == VotePaperType.YES },
       noNum = vote.votePaperList.count { it.votePaperType == VotePaperType.NO },
       abstainNum = vote.votePaperList.count { it.votePaperType == VotePaperType.ABSTAIN },
+      totalNum = vote.votePaperList.size,
       result = vote.result,
       startedAt = vote.startedAt,
       finishedAt = vote.finishedAt,
