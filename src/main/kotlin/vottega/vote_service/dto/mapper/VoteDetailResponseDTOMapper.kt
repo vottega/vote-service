@@ -9,6 +9,7 @@ class VoteDetailResponseDTOMapper(private val votePaperMapper: VotePaperMapper) 
   fun toVoteDetailResponse(vote: Vote): VoteDetailResponseDTO {
     return VoteDetailResponseDTO(
       id = vote.id ?: throw IllegalStateException("Vote ID is null"),
+      roomId = vote.roomId,
       agendaName = vote.agendaName,
       voteName = vote.voteName,
       status = vote.status,
