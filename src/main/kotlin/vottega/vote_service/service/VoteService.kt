@@ -74,6 +74,7 @@ class VoteService(
       Status.ENDED -> vote.endVote()
       else -> throw IllegalArgumentException("Invalid Action")
     }
+    voteRepository.save(vote)
     val voteDto = voteResponseDTOMapper.toVoteResponseDTO(vote)
     voteProducer.voteUpdatedMessageProduce(voteDto, VoteAction.STATUS_CHANGE)
     return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
