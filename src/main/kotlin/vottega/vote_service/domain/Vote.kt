@@ -90,10 +90,10 @@ class Vote(
 
   fun startVote(participantList: List<ParticipantResponseDTO>) {
     if (status == Status.CREATED) {
-      participantList.filter { it.participantRole.canVote }.forEach {
+      participantList.filter { it.participantRole.canVote && it.isEntered }.forEach {
         votePaperList.add(VotePaper(it.id, this, it.name))
       }
-      if (votePaperList.size < minParticipantNumber && votePaperList.size < minParticipantRate.multiply(participantList.size)) {
+      if (votePaperList.size < minParticipantNumber || votePaperList.size < minParticipantRate.multiply(participantList.filter { it.isEntered }.size)) {
         throw VoteStatusConflictException("참여자 수가 부족합니다.")
       }
       status = Status.STARTED
