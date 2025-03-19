@@ -11,6 +11,11 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Entity
+@Table(
+  name = "vote", indexes = [
+    Index(name = "idx_reserved_start_time", columnList = "reservedStartTime"),
+  ]
+)
 class Vote(
   var agendaName: String,
   voteName: String,
