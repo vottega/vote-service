@@ -283,15 +283,14 @@ class VoteServiceImplTest {
       "voteName",
       FractionVO(1, 2),
       null,
-      LocalDateTime.now().plusMinutes(1),
+      LocalDateTime.now(),
       null,
       FractionVO(1, 2)
     )
     val createdVote = voteService.createVote(
       0, newVote
     )
-
-    Thread.sleep(7000)
+    voteScheduler.checkReservedVote()
     val startedVote = voteService.getVoteDetail(createdVote.id)
     assertThat(startedVote.status).isEqualTo(Status.STARTED)
   }
