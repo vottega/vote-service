@@ -13,7 +13,7 @@ import java.util.*
 @Entity
 @Table(
   name = "vote", indexes = [
-    Index(name = "idx_reserved_start_time", columnList = "reservedStartTime"),
+    Index(name = "idx_reserved_status_start_time", columnList = "status, reservedStartTime"),
   ]
 )
 class Vote(
