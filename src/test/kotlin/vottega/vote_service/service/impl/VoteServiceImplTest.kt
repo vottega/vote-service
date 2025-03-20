@@ -23,6 +23,7 @@ import vottega.vote_service.dto.room.ParticipantResponseDTO
 import vottega.vote_service.dto.room.ParticipantRoleDTO
 import vottega.vote_service.exception.VoteForbiddenException
 import vottega.vote_service.exception.VoteStatusConflictException
+import vottega.vote_service.service.VoteScheduler
 import vottega.vote_service.service.VoteService
 import vottega.vote_service.service.cache.RoomParticipantService
 import java.time.LocalDateTime
@@ -36,6 +37,9 @@ class VoteServiceImplTest {
 
   @Autowired
   lateinit var voteService: VoteService
+
+  @Autowired
+  lateinit var voteScheduler: VoteScheduler
 
   @MockBean
   lateinit var voteProducer: VoteProducer
@@ -269,5 +273,26 @@ class VoteServiceImplTest {
     val resetVote = voteService.getVoteDetail(createdVote.id)
     assertThat(resetVote.status).isEqualTo(Status.CREATED)
     assertThat(resetVote.votePaperList.size).isEqualTo(0)
+  }
+
+  @Test
+  @DisplayName("투표 예약 시작 테스트")
+  fun scheduleVote() {
+    val newVote = VoteRequestDTO(
+      "agendaName",
+      "voteName",
+      FractionVO(1, 2),
+      null,
+      LocalDateTime.now().plusMinutes(1),
+      null,
+      FractionVO(1, 2)
+    )
+    val createdVote = voteService.createVote(
+      0, newVote
+    )
+
+    Thread.sleep(7000)
+    val startedVote = voteService.getVoteDetail(createdVote.id)
+    assertThat(startedVote.status).isEqualTo(Status.STARTED)
   }
 }
