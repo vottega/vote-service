@@ -40,6 +40,8 @@ repositories {
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -65,6 +67,8 @@ dependencies {
   testImplementation("org.mockito:mockito-core:4.8.0")
   testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 
+  testImplementation("org.testcontainers:testcontainers:1.20.6")
+  testImplementation("org.testcontainers:junit-jupiter:1.20.6")
   implementation("com.h2database:h2")
 }
 
