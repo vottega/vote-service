@@ -4,9 +4,12 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class RoomOwnerService(private val cacheService: CacheService, private val redisTemplate: RedisTemplate<String, Any>) {
+class RoomOwnerService(
+  private val cacheService: CacheService,
+  private val longRedisTemplate: RedisTemplate<String, Long>
+) {
   fun getRoomOwner(roomId: Long): Long {
-    var roomOwner: Long? = redisTemplate.opsForValue().get("room-owner:$roomId") as Long?
+    var roomOwner: Long? = longRedisTemplate.opsForValue().get("room-owner:$roomId")
     if (roomOwner == null) {
       roomOwner = cacheService.loadAndCacheRoomInfo(roomId).ownerId
     }

@@ -9,18 +9,20 @@ import vottega.vote_service.dto.room.RoomResponseDTO
 @Service
 class CacheService(
   private val redisClient: RoomClient,
-  private val redisTemplate: RedisTemplate<String, Any>,
+  private val participantRedisTemplate: RedisTemplate<String, ParticipantResponseDTO>,
+  private val longRedisTemplate: RedisTemplate<String, Long>
 ) {
 
   fun loadAndCacheRoomInfo(roomId: Long): RoomResponseDTO {
     val room = redisClient.getRoom(roomId)
 
-    redisTemplate.opsForValue().set("room-owner:$roomId", room.ownerId)
-    redisTemplate.opsForHash<String, ParticipantResponseDTO>()
+    longRedisTemplate.opsForValue().set("room-owner:$roomId", room.ownerId)
+    participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .putAll(
         "room-participant:$roomId",
         room.participants.associateBy({ it.id.toString() }, { it })
       )
+
     return room
   }
 }

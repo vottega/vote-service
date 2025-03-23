@@ -8,10 +8,10 @@ import java.util.*
 @Service
 class RoomParticipantService(
   private val cacheService: CacheService,
-  private val redisTemplate: RedisTemplate<String, Any>
+  private val participantRedisTemplate: RedisTemplate<String, ParticipantResponseDTO>,
 ) {
   fun getRoomParticipantList(roomId: Long): List<ParticipantResponseDTO> {
-    var participants = redisTemplate.opsForHash<String, ParticipantResponseDTO>()
+    var participants = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .entries("room-participant:$roomId").values.toList()
     if (participants.isEmpty()) {
       participants = cacheService.loadAndCacheRoomInfo(roomId).participants
@@ -20,7 +20,7 @@ class RoomParticipantService(
   }
 
   fun getRoomParticipant(roomId: Long, participantId: UUID): ParticipantResponseDTO? {
-    var participant = redisTemplate.opsForHash<String, ParticipantResponseDTO>()
+    var participant = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .get("room-participant:$roomId", participantId.toString())
     if (participant == null) {
       participant = cacheService.loadAndCacheRoomInfo(roomId).participants.find { it.id == participantId }
@@ -29,17 +29,24 @@ class RoomParticipantService(
   }
 
   fun editRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    redisTemplate.opsForHash<String, ParticipantResponseDTO>()
-      .put("room-participant:$roomId", participant.id.toString(), participant)
+    if (participantRedisTemplate.hasKey("room-participant:$roomId")) {
+      participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
+        .put("room-participant:$roomId", participant.id.toString(), participant)
+    } else {
+      cacheService.loadAndCacheRoomInfo(roomId)
+    }
   }
 
   fun deleteRoomParticipant(roomId: Long, participantId: UUID) {
-    redisTemplate.opsForHash<String, ParticipantResponseDTO>()
+    participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .delete("room-participant:$roomId", participantId.toString())
   }
 
   fun addRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    redisTemplate.opsForHash<String, ParticipantResponseDTO>()
-      .put("room-participant:$roomId", participant.id.toString(), participant)
+    if (participantRedisTemplate.hasKey("room-participant:$roomId")) {
+      participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
+        .put("room-participant:$roomId", participant.id.toString(), participant)
+    }
+    cacheService.loadAndCacheRoomInfo(roomId)
   }
 }
