@@ -67,7 +67,7 @@ class VoteService(
 
 
   // TODO 방장인지 확인하는 security 로직 추가
-  fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO { // TODO Enum으로 변경
+  fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     when (action) {
       Status.STARTED -> vote.startVote(roomParticipantService.getRoomParticipantList(vote.roomId))
