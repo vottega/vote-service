@@ -26,6 +26,9 @@ class VotePaper(
   var votedAt: LocalDateTime? = null
     private set
 
+  var deletedAt: LocalDateTime? = null
+    private set
+
   var votePaperType: VotePaperType = VotePaperType.NOT_VOTED
 
   @PrePersist
