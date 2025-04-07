@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import vottega.vote_service.config.FeignConfig
 import vottega.vote_service.dto.room.RoomResponseDTO
 
-@FeignClient(name = "roomService", url = "\${room.service.url}", configuration = [FeignConfig::class])
+@FeignClient(name = "room-service", configuration = [FeignConfig::class])
 interface RoomClient {
-  @GetMapping("api/room/{roomId}")
+  @GetMapping("api/auth/user}")
   fun getRoom(roomId: Long): RoomResponseDTO
 }
 
