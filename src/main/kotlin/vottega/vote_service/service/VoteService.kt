@@ -34,7 +34,7 @@ class VoteService(
       agendaName = voteRequestDTO.agendaName,
       voteName = voteRequestDTO.voteName,
       roomId = roomId,
-      passRate = voteRequestDTO.minPassRate,
+      passRate = voteRequestDTO.passRate,
       isSecret = voteRequestDTO.isSecret ?: false,
       reservedStartTime = voteRequestDTO.reservedStartTime,
       minParticipantNumber = voteRequestDTO.minParticipantNumber,
@@ -55,7 +55,7 @@ class VoteService(
     vote.update(
       voteRequestDTO.agendaName,
       voteRequestDTO.voteName,
-      voteRequestDTO.minPassRate,
+      voteRequestDTO.passRate,
       voteRequestDTO.isSecret,
       voteRequestDTO.reservedStartTime,
       voteRequestDTO.minParticipantNumber,

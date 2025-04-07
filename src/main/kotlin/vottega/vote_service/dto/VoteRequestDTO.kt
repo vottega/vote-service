@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class VoteRequestDTO(
   val agendaName: String,
   val voteName: String,
-  val minPassRate: FractionVO,
+  val passRate: FractionVO,
   val isSecret: Boolean?,
   val reservedStartTime: LocalDateTime?,
   val minParticipantNumber: Int?,
