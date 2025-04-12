@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Repository
 interface VoteRepository : JpaRepository<Vote, Long> {
-  @Query("SELECT v FROM Vote v JOIN FETCH VotePaper WHERE v.roomId = :roomId")
+  @Query("SELECT v FROM Vote v JOIN FETCH v.votePaperList  WHERE v.roomId = :roomId")
   fun findByRoomId(roomId: Long): List<Vote>
   fun findByStatusAndReservedStartTimeLessThanEqual(
     status: Status,
