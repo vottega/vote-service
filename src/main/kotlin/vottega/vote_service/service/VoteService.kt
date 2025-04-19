@@ -14,6 +14,7 @@ import vottega.vote_service.dto.mapper.VoteDetailResponseDTOMapper
 import vottega.vote_service.dto.mapper.VotePaperMapper
 import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
 import vottega.vote_service.exception.VoteNotFoundException
+import vottega.vote_service.repository.VotePaperRepository
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.cache.RoomParticipantService
 import java.util.*
@@ -22,6 +23,7 @@ import java.util.*
 @Transactional
 class VoteService(
   private val voteRepository: VoteRepository,
+  private val votePaperRepository: VotePaperRepository,
   private val voteDetailResponseDTOMapper: VoteDetailResponseDTOMapper,
   private val voteResponseDTOMapper: VoteResponseDTOMapper,
   private val voteProducer: VoteProducer,
@@ -74,6 +76,7 @@ class VoteService(
       Status.ENDED -> vote.endVote()
       else -> throw IllegalArgumentException("Invalid Action")
     }
+    votePaperRepository.saveAll(vote.votePaperList) // 왜 이거 해야되는지 확인하자
     voteRepository.save(vote)
     val voteDto = voteResponseDTOMapper.toVoteResponseDTO(vote)
     voteProducer.voteUpdatedMessageProduce(voteDto, VoteAction.STATUS_CHANGE)
