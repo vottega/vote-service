@@ -3,7 +3,6 @@ package vottega.vote_service.service.impl
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
@@ -95,8 +94,7 @@ class VoteServiceImplTest {
 
 
   @Test
-  @DisplayName("투표 생성 테스트")
-  fun createVote() {
+  fun `투표는 DTO와 똑같은 정보로 생성이 되어야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 3), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -113,8 +111,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 수정 테스트")
-  fun editVote() {
+  fun `투표는 수정 DTO와 똑같은 정보로 수정이 되어야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -134,8 +131,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 시작 테스트 (CREATED -> STARTED)")
-  fun editVoteStatusCreatedToStartedSuccess() {
+  fun `투표는 CREATED일 때에 시작이될 수 있고 시작 시에 투표가 가능한 참가자들의 NOT_VOTED 투표용지가 있고 상태는 NOT_DECIDED여야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -154,8 +150,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 시작 실패 테스트 최소 참가자 비율 만족 X (CREATED -> STARTED)")
-  fun editVoteStatusCreatedToStartedFailMinParticipantRate() {
+  fun `투표 시작 시에 최소 참가자 비율을 만족시키지 못하면 에러를 내야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 1))
     val createdVote = voteService.createVote(
       0, newVote
@@ -165,8 +160,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 시작 실패 테스트 최소 참가자 수 만족 X (CREATED -> STARTED)")
-  fun editVoteStatusCreatedToStartedFailMinParticipant() {
+  fun `투표 시작 시에 최소 참가자 수를 만족시키지 못하면 에러를 내야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, 3, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -176,8 +170,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("실패 테스트 (CREATED -> ENDED OR STARTED)")
-  fun editVoteStatusCreatedToEndedFail() {
+  fun `CREATED일 경우 STARTED로의 상태 변경만 가능하다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -188,8 +181,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 테스트")
-  fun addVotePaper() {
+  fun `투표를 할 경우 투표한 대로 저장이 되어야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -203,8 +195,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표권이 없거나 방에 들어가지 않아서 투표를 못해서 실패하는 케이스")
-  fun addVotePaperFail() {
+  fun `투표를 하려면 투표권이 있거나 참가를 하고 있어야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -227,8 +218,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 종료 테스트 투표 가결")
-  fun endVotePass() {
+  fun `투표 종료 시에 passRate 이상이라면 투표 결과가 PASSED 여야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -243,8 +233,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 종료 테스트 투표 부결")
-  fun endVoteReject() {
+  fun `투표 종료 시에 passRate 미만이라면 투표 결과가 REJECTED가 나와야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -259,8 +248,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 초기화 테스트")
-  fun resetVote() {
+  fun `투표 초기화 시에 상태는 CREATED로 변경이 되고 votePaper의 개수는 0개여야 한다`() {
     val newVote = VoteRequestDTO("agendaName", "voteName", FractionVO(1, 2), null, null, null, FractionVO(1, 2))
     val createdVote = voteService.createVote(
       0, newVote
@@ -276,8 +264,7 @@ class VoteServiceImplTest {
   }
 
   @Test
-  @DisplayName("투표 예약 시작 테스트")
-  fun scheduleVote() {
+  fun `투표 예약 시에 투표 예약 시간이 될 경우 자동으로 투표가 시작되어야 한다`() {
     val newVote = VoteRequestDTO(
       "agendaName",
       "voteName",
