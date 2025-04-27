@@ -1,6 +1,7 @@
 package vottega.vote_service.service
 
 import jakarta.transaction.Transactional
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import vottega.avro.VoteAction
 import vottega.vote_service.adaptor.VoteProducer
@@ -30,7 +31,7 @@ class VoteService(
   private val votePaperMapper: VotePaperMapper,
   private val roomParticipantService: RoomParticipantService
 ) {
-  // TODO 방장인지 확인하는 security 로직 추가
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal)")
   fun createVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
     val vote = Vote(
       agendaName = voteRequestDTO.agendaName,
@@ -51,7 +52,7 @@ class VoteService(
   }
 
 
-  // TODO 방장인지 확인하는 security 로직 추가
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal)")
   fun editVote(roomId: Long, voteRequestDTO: VoteRequestDTO): VoteDetailResponseDTO {
     val vote = voteRepository.findById(roomId).orElseThrow { VoteNotFoundException(roomId) }
     vote.update(
@@ -68,8 +69,12 @@ class VoteService(
   }
 
 
-  // TODO 방장인지 확인하는 security 로직 추가
-  fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO {
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal)")
+  fun editVoteStatusWithSecurity(roomId: Long, voteId: Long, action: Status): VoteDetailResponseDTO {
+    return editVoteStatus(roomId, voteId, action)
+  }
+
+  fun editVoteStatus(roomId: Long, voteId: Long, action: Status): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     when (action) {
       Status.STARTED -> vote.startVote(roomParticipantService.getRoomParticipantList(vote.roomId))
@@ -84,7 +89,7 @@ class VoteService(
   }
 
 
-  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  @PreAuthorize("@voteSecurity.isParticipantInVote(#voteId, authentication.principal)")
   fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     val addedVotePaper = vote.addVotePaper(userId, voteResultType)
@@ -92,20 +97,20 @@ class VoteService(
   }
 
 
-  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal) || hasRole('PARTICIPANT') && @voteSecurity.isParticipantInRoom(#roomId, authentication.principal)")
   fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
     return voteRepository.findByRoomId(roomId).map {
       voteResponseDTOMapper.toVoteResponseDTO(it)
     }
   }
 
-  // TODO 방에 있는 사람인지 확인하는 security 로직 추가
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(authentication.principal, #voteId) || hasRole('PARTICIPANT') && @voteSecurity.isParticipantInVote(#voteId, authentication.principal)")
   fun getVoteDetail(voteId: Long): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     return voteDetailResponseDTOMapper.toVoteDetailResponse(vote)
   }
 
-  // TODO 방장인지 확인하는 security 로직 추가
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(authentication.principal, #voteId)")
   fun resetVote(voteId: Long) {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     vote.resetVote()
