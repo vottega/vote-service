@@ -12,7 +12,7 @@ import vottega.vote_service.service.VoteService
 import java.util.*
 
 @RestController
-@RequestMapping("api/vote")
+@RequestMapping("/api/vote")
 @Tag(name = "Vote Controller", description = "투표 관련 API")
 class VoteController(private val voteService: VoteService) {
   @PostMapping("/{voteId}/{action}")
