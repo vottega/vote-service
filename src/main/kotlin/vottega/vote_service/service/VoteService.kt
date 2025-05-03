@@ -69,12 +69,12 @@ class VoteService(
   }
 
 
-  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal)")
-  fun editVoteStatusWithSecurity(roomId: Long, voteId: Long, action: Status): VoteDetailResponseDTO {
-    return editVoteStatus(roomId, voteId, action)
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(authentication.principal, #voteId)")
+  fun editVoteStatusWithSecurity(voteId: Long, action: Status): VoteDetailResponseDTO {
+    return editVoteStatus(voteId, action)
   }
 
-  fun editVoteStatus(roomId: Long, voteId: Long, action: Status): VoteDetailResponseDTO {
+  fun editVoteStatus(voteId: Long, action: Status): VoteDetailResponseDTO {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
     when (action) {
       Status.STARTED -> vote.startVote(roomParticipantService.getRoomParticipantList(vote.roomId))

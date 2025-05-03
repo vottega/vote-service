@@ -15,7 +15,7 @@ class VoteScheduler(
   fun checkReservedVote() {
     val votes = voteRepository.findByStatusAndReservedStartTimeLessThanEqual(Status.CREATED, LocalDateTime.now())
     votes.forEach {
-      voteService.editVoteStatus(it.roomId, it.id!!, Status.STARTED)
+      voteService.editVoteStatus(it.id!!, Status.STARTED)
     }
   }
 
