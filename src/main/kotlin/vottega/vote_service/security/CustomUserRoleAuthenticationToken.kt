@@ -3,7 +3,7 @@ package vottega.vote_service.security
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import vottega.room_service.dto.ClientRole
+import vottega.vote_service.dto.ClientRole
 
 class CustomUserRoleAuthenticationToken(
   private val userId: Long,
