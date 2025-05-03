@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.vote_service.argument_resolver.ParticipantId
-import vottega.vote_service.domain.enum.Status
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VoteRequestDTO
+import vottega.vote_service.dto.VoteStatusRequestDTO
 import vottega.vote_service.service.VoteService
 import java.util.*
 
@@ -15,10 +15,10 @@ import java.util.*
 @RequestMapping("/api/vote")
 @Tag(name = "Vote Controller", description = "투표 관련 API")
 class VoteController(private val voteService: VoteService) {
-  @PostMapping("/{voteId}/{action}")
+  @PostMapping("/{voteId}/status")
   @Operation(summary = "투표 상태 변경", description = "투표 상태를 변경합니다.")
-  fun actionVote(@PathVariable voteId: Long, @PathVariable action: Status) =
-    voteService.editVoteStatusWithSecurity(voteId, action)
+  fun actionVote(@PathVariable voteId: Long, @RequestBody roomStatusRequestDTO: VoteStatusRequestDTO) =
+    voteService.editVoteStatusWithSecurity(voteId, roomStatusRequestDTO.status)
 
 
   @ResponseStatus(HttpStatus.CREATED)
