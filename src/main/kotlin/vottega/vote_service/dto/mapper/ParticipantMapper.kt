@@ -18,7 +18,7 @@ class ParticipantMapper(
       participantRole = participantRoleMapper.toParticipantRoleDTO(participant.role),
       isEntered = participant.isEntered,
       createdAt = participant.createdAt.atZone(ZoneId.systemDefault()).toLocalDateTime(),
-      enteredAt = participant.enteredAt.atZone(ZoneId.systemDefault()).toLocalDateTime(),
+      enteredAt = participant.enteredAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
       lastUpdatedAt = participant.lastUpdatedAt.atZone(ZoneId.systemDefault()).toLocalDateTime()
     )
   }
