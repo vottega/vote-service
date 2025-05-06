@@ -14,6 +14,7 @@ data class VoteDetailResponseDTO(
   val createdAt: LocalDateTime,
   val startedAt: LocalDateTime? = null,
   val finishedAt: LocalDateTime? = null,
+  val reservedAt: LocalDateTime? = null,
   val passRate: FractionVO,
   val minParticipantNumber: Int,
   val minParticipantRate: FractionVO,

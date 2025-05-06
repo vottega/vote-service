@@ -40,7 +40,8 @@ class Vote(
   var votePaperList: MutableList<VotePaper> = mutableListOf()
     private set
 
-  var reservedStartTime: LocalDateTime = reservedStartTime ?: LocalDateTime.now()
+  var reservedStartTime: LocalDateTime? = reservedStartTime
+    private set
 
   var minParticipantNumber: Int = minParticipantNumber ?: 0
 

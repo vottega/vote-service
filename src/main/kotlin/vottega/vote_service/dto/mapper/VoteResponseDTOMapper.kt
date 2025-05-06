@@ -50,7 +50,7 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
       .setMinParticipantNumber(voteResponseDTO.minParticipantNumber)
       .setMinParticipantRate(fractionMapper.toFractionAvro(voteResponseDTO.minParticipantRate))
       .setIsSecret(voteResponseDTO.isSecret)
-      .setReservedStartTime(voteResponseDTO.reservedStartTime.atZone(ZoneId.systemDefault()).toInstant())
+      .setReservedStartTime(voteResponseDTO.reservedStartTime?.atZone(ZoneId.systemDefault())?.toInstant())
       .setVoteAction(voteAction)
       .setStartedAt(voteResponseDTO.startedAt?.atZone(ZoneId.systemDefault())?.toInstant())
       .setFinishedAt(voteResponseDTO.finishedAt?.atZone(ZoneId.systemDefault())?.toInstant())

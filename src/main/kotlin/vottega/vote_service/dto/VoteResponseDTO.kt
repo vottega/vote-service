@@ -14,7 +14,7 @@ data class VoteResponseDTO(
   val passRate: FractionVO,
   val minParticipantNumber: Int,
   val minParticipantRate: FractionVO,
-  val reservedStartTime: LocalDateTime,
+  val reservedStartTime: LocalDateTime?,
   val isSecret: Boolean,
   val yesNum: Int,
   val noNum: Int,

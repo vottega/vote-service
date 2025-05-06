@@ -16,6 +16,7 @@ class VoteDetailResponseDTOMapper(private val votePaperMapper: VotePaperMapper) 
       createdAt = vote.createdAt ?: throw IllegalStateException("createdAt is null"),
       startedAt = vote.startedAt,
       finishedAt = vote.finishedAt,
+      reservedAt = vote.reservedStartTime,
       passRate = vote.passRate,
       minParticipantNumber = vote.minParticipantNumber,
       minParticipantRate = vote.minParticipantRate,
