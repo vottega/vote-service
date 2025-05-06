@@ -11,7 +11,7 @@ class VoteScheduler(
   private val voteService: VoteService,
   private val voteRepository: VoteRepository,
 ) {
-  @Scheduled(fixedDelay = 60000)
+  @Scheduled(cron = "0 * * * * *")
   fun checkReservedVote() {
     val votes = voteRepository.findByStatusAndReservedStartTimeLessThanEqual(Status.CREATED, LocalDateTime.now())
     votes.forEach {
