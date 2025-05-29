@@ -15,6 +15,7 @@ import vottega.vote_service.dto.mapper.VoteDetailResponseDTOMapper
 import vottega.vote_service.dto.mapper.VotePaperMapper
 import vottega.vote_service.dto.mapper.VoteResponseDTOMapper
 import vottega.vote_service.exception.VoteNotFoundException
+import vottega.vote_service.exception.VoteStatusConflictException
 import vottega.vote_service.repository.VotePaperRepository
 import vottega.vote_service.repository.VoteRepository
 import vottega.vote_service.service.cache.RoomParticipantService
@@ -79,7 +80,7 @@ class VoteService(
     when (action) {
       Status.STARTED -> vote.startVote(roomParticipantService.getRoomParticipantList(vote.roomId))
       Status.ENDED -> vote.endVote()
-      else -> throw IllegalArgumentException("Invalid Action")
+      else -> throw VoteStatusConflictException("Invalid Action")
     }
     votePaperRepository.saveAll(vote.votePaperList) // 왜 이거 해야되는지 확인하자
     voteRepository.save(vote)
