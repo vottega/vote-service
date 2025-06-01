@@ -1,5 +1,5 @@
 services:
-  room-db:
+  vote-db:
     image: mariadb:latest
     container_name: vote-db
     ports:
@@ -11,6 +11,29 @@ services:
       MYSQL_PASSWORD: minguni
     volumes:
       - vote-db-data:/var/lib/mysql  # 데이터를 로컬에 영구 저장
+  vote-service-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vote-service:latest
+    container_name: vote-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=host.docker.internal:9092
+      - SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL=http://host.docker.internal:8081
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://host.docker.internal:3307/vote-db
+      - SPRING_DATA_REDIS_HOST=host.docker.internal
+      - SPRING_DATA_REDIS_PORT=6379
+      - JAVA_OPTS=-Xms512m -Xmx1g
+      - EUREKA_INSTANCE_IP_ADDRESS=host.docker.internal
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - vote-db
+      - redis
 
   redis:
     image: redis:latest

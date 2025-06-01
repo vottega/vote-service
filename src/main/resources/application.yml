@@ -1,6 +1,8 @@
 spring:
   application:
     name: vote-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   security:
     user:
       name: minguni
@@ -35,14 +37,16 @@ spring:
 springdoc:
   swagger-ui:
     path: /api
-room:
-  service:
-    url: http://localhost:8080
 
 
 server:
   port: 8082
+  shutdown: graceful
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8761/eureka}
+    should-unregister-on-shutdown: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:true}
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
