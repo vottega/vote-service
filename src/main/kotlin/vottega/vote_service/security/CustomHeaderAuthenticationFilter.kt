@@ -49,6 +49,8 @@ class CustomHeaderAuthenticationFilter : OncePerRequestFilter() {
     }
     SecurityContextHolder.getContext().authentication = authentication
     filterChain.doFilter(request, response)
-
   }
+
+  override fun shouldNotFilter(request: HttpServletRequest) =
+    !request.servletPath.startsWith("/api/room/")
 }
