@@ -18,15 +18,33 @@ class ParticipantConsumer(
     containerFactory = "participantKafkaListenerContainerFactory"
   )
   fun participantConnectEventConsume(participantAvro: ParticipantAvro) {
-    if (participantAvro.action == Action.ADD) {
-      participantMapper.toParticipantResponseDTO(participantAvro).let {
-        roomParticipantService.addRoomParticipant(it.roomId, it)
+    when (participantAvro.action) {
+      Action.ADD -> {
+        participantMapper.toParticipantResponseDTO(participantAvro).let {
+          roomParticipantService.addRoomParticipant(it.roomId, it)
+        }
       }
-    } else if (participantAvro.action == Action.DELETE) {
-      roomParticipantService.deleteRoomParticipant(participantAvro.roomId, participantAvro.id)
-    } else {
-      participantMapper.toParticipantResponseDTO(participantAvro).let {
-        roomParticipantService.editRoomParticipant(it.roomId, it)
+
+      Action.DELETE -> {
+        roomParticipantService.deleteRoomParticipant(participantAvro.roomId, participantAvro.id)
+      }
+
+      Action.EDIT -> {
+        participantMapper.toParticipantResponseDTO(participantAvro).let {
+          roomParticipantService.editRoomParticipant(it.roomId, it)
+        }
+      }
+
+      Action.ENTER -> {
+        roomParticipantService.editRoomParticipantEnterStatus(participantAvro.roomId, participantAvro.id, true)
+      }
+
+      Action.EXIT -> {
+        roomParticipantService.editRoomParticipantEnterStatus(participantAvro.roomId, participantAvro.id, false)
+      }
+      
+      else -> {
+        // No action needed for other actions
       }
     }
   }

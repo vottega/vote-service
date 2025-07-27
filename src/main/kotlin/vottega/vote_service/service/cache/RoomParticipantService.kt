@@ -37,6 +37,16 @@ class RoomParticipantService(
     }
   }
 
+  fun editRoomParticipantEnterStatus(roomId: Long, participantId: UUID, isEntered: Boolean) {
+    val participant = getRoomParticipant(roomId, participantId)
+    if (participant != null) {
+      val updatedParticipant = participant.copy(isEntered = isEntered)
+      editRoomParticipant(roomId, updatedParticipant)
+    } else {
+      cacheService.loadAndCacheRoomInfo(roomId)
+    }
+  }
+
   fun deleteRoomParticipant(roomId: Long, participantId: UUID) {
     participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .delete("room-participant:$roomId", participantId.toString())
