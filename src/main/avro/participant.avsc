@@ -12,7 +12,11 @@
     },
     {
       "name": "name",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "roomId",
@@ -42,11 +46,19 @@
     },
     {
       "name": "role",
-      "type": "ParticipantRoleAvro"
+      "type": [
+        "null",
+        "ParticipantRoleAvro"
+      ],
+      "default": null
     },
     {
       "name": "isEntered",
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "phoneNumber",
