@@ -2,7 +2,7 @@ package vottega.vote_service.dto.mapper
 
 import org.springframework.stereotype.Component
 import vottega.avro.ParticipantAvro
-import vottega.sse_server.dto.ParticipantResponseDTO
+import vottega.vote_service.dto.room.ParticipantResponseDTO
 import java.time.ZoneId
 
 @Component
@@ -15,11 +15,11 @@ class ParticipantMapper(
       name = participant.name,
       roomId = participant.roomId,
       position = participant.position,
-      participantRole = participant.role?.let { participantRoleMapper.toParticipantRoleDTO(it) },
+      participantRole = participantRoleMapper.toParticipantRoleDTO(participant.role),
       isEntered = participant.isEntered,
       createdAt = participant.createdAt.atZone(ZoneId.systemDefault()).toLocalDateTime(),
       enteredAt = participant.enteredAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
-      lastUpdatedAt = participant.lastUpdatedAt?.atZone(ZoneId.systemDefault())?.toLocalDateTime(),
+      lastUpdatedAt = participant.lastUpdatedAt.atZone(ZoneId.systemDefault()).toLocalDateTime()
     )
   }
 }
