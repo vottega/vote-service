@@ -42,10 +42,10 @@ class VoteController(private val voteService: VoteService) {
   @Operation(summary = "투표", description = "투표를 합니다.")
   fun addVotePaper(
     @PathVariable voteId: Long,
-    @ParticipantId userId: UUID,
+    @ParticipantId participant: UUID,
     voteResultType: VotePaperType
   ) =
-    voteService.addVotePaper(voteId, userId, voteResultType)
+    voteService.addVotePaper(voteId, participant, voteResultType)
 
   @PostMapping("/{voteId}/reset")
   @Operation(summary = "투표 초기화", description = "투표를 초기화합니다.")

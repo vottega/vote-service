@@ -91,9 +91,9 @@ class VoteService(
 
 
   @PreAuthorize("@voteSecurity.isParticipantInVote(#voteId, authentication.principal)")
-  fun addVotePaper(voteId: Long, userId: UUID, voteResultType: VotePaperType) {
+  fun addVotePaper(voteId: Long, participantId: UUID, voteResultType: VotePaperType) {
     val vote = voteRepository.findById(voteId).orElseThrow { VoteNotFoundException(voteId) }
-    val addedVotePaper = vote.addVotePaper(userId, voteResultType)
+    val addedVotePaper = vote.addVotePaper(participantId, voteResultType)
     voteProducer.votePaperAddedMessageProduce(votePaperMapper.toVotePaperDTO(addedVotePaper))
   }
 
