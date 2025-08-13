@@ -25,4 +25,5 @@ data class VoteResponseDTO(
   val startedAt: LocalDateTime? = null,
   val finishedAt: LocalDateTime? = null,
   val lastUpdatedAt: LocalDateTime,
+  val isVoted: Boolean?
 )

@@ -33,6 +33,15 @@ dependencyManagement {
 }
 
 repositories {
+  maven {
+    url = uri("https://maven.pkg.github.com/vottega/security")
+    credentials {
+      username = findProperty("gpr.user") as String?
+        ?: System.getenv("GITHUB_ACTOR")
+      password = findProperty("gpr.key") as String?
+        ?: System.getenv("GITHUB_TOKEN")
+    }
+  }
   mavenCentral()
   maven("https://packages.confluent.io/maven/")
 }
@@ -58,6 +67,7 @@ dependencies {
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+  implementation("vottega:security-starter:1.1.1")
 
   implementation("org.apache.avro:avro:1.11.4")
   implementation("io.confluent:kafka-avro-serializer:7.5.0")
