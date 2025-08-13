@@ -67,7 +67,7 @@ dependencies {
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-  implementation("vottega:security-starter:1.1.1")
+  implementation("vottega:security-starter:1.1.2")
 
   implementation("org.apache.avro:avro:1.11.4")
   implementation("io.confluent:kafka-avro-serializer:7.5.0")
