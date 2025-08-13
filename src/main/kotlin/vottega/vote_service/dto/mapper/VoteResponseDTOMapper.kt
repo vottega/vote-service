@@ -14,7 +14,7 @@ import java.time.ZoneId
 
 @Service
 class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
-  fun toVoteResponseDTO(vote: Vote): VoteResponseDTO {
+  fun toVoteResponseDTO(vote: Vote, isVoted: Boolean? = null): VoteResponseDTO {
     return VoteResponseDTO(
       id = vote.id ?: throw IllegalStateException("Vote ID is null"),
       roomId = vote.roomId,
@@ -34,7 +34,8 @@ class VoteResponseDTOMapper(private val fractionMapper: FractionMapper) {
       result = vote.result,
       startedAt = vote.startedAt,
       finishedAt = vote.finishedAt,
-      lastUpdatedAt = vote.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null")
+      lastUpdatedAt = vote.lastUpdatedAt ?: throw IllegalStateException("lastUpdatedAt is null"),
+      isVoted = isVoted
     )
   }
 

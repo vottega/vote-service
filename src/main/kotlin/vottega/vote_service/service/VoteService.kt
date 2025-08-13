@@ -98,10 +98,20 @@ class VoteService(
   }
 
 
-  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal) || hasRole('PARTICIPANT') && @voteSecurity.isParticipantInRoom(#roomId, authentication.principal)")
+  @PreAuthorize("hasRole('USER') && @voteSecurity.isOwner(#roomId, authentication.principal)")
   fun getVoteInfo(roomId: Long): List<VoteResponseDTO> {
     return voteRepository.findByRoomId(roomId).map {
       voteResponseDTOMapper.toVoteResponseDTO(it)
+    }
+  }
+
+  @PreAuthorize("hasRole('PARTICIPANT') && @voteSecurity.isParticipantInRoom(#roomId, authentication.principal)")
+  fun getVoteInfo(roomId: Long, participantId: UUID): List<VoteResponseDTO> {
+    return voteRepository.findByRoomId(roomId).map {
+      voteResponseDTOMapper.toVoteResponseDTO(
+        it,
+        isVoted = it.votePaperList.any { votePaper -> votePaper.userId == participantId }
+      )
     }
   }
 

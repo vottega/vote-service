@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import vottega.vote_service.argument_resolver.ParticipantId
+import vottega.security.security.ParticipantId
 import vottega.vote_service.domain.enum.VotePaperType
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteStatusRequestDTO
@@ -14,7 +14,9 @@ import java.util.*
 @RestController
 @RequestMapping("/api/vote")
 @Tag(name = "Vote Controller", description = "투표 관련 API")
-class VoteController(private val voteService: VoteService) {
+class VoteController(
+  private val voteService: VoteService,
+) {
   @PostMapping("/{voteId}/status")
   @Operation(summary = "투표 상태 변경", description = "투표 상태를 변경합니다.")
   fun actionVote(@PathVariable voteId: Long, @RequestBody roomStatusRequestDTO: VoteStatusRequestDTO) =
@@ -28,9 +30,14 @@ class VoteController(private val voteService: VoteService) {
     voteService.createVote(roomId, voteRequestDTO)
 
 
-  @GetMapping("/{roomId}")
+  @GetMapping("/{roomId}", headers = ["X-User-Id"])
   @Operation(summary = "투표 정보 조회", description = "투표 정보를 조회합니다.")
   fun getVoteInfo(@PathVariable roomId: Long) = voteService.getVoteInfo(roomId)
+
+  @GetMapping("/{roomId}", headers = ["X-Participant-Id", "X-Room-Id"])
+  @Operation(summary = "투표 정보 조회", description = "투표 정보를 조회합니다.")
+  fun getVoteInfo(@PathVariable roomId: Long, @ParticipantId participant: UUID) =
+    voteService.getVoteInfo(roomId, participant)
 
 
   @GetMapping("/{voteId}/detail")
