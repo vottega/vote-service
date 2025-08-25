@@ -9,7 +9,7 @@ class RoomOwnerService(
   private val longRedisTemplate: RedisTemplate<String, Long>
 ) {
   fun getRoomOwner(roomId: Long): Long {
-    var roomOwner: Long? = longRedisTemplate.opsForValue().get("room-owner:$roomId")
+    var roomOwner: Long? = longRedisTemplate.opsForValue().get(cacheService.getRoomOwnerCacheKey(roomId))
     if (roomOwner == null) {
       roomOwner = cacheService.loadAndCacheRoomInfo(roomId).ownerId
     }

@@ -12,7 +12,7 @@ class RoomParticipantService(
 ) {
   fun getRoomParticipantList(roomId: Long): List<ParticipantResponseDTO> {
     var participants = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-      .entries("room-participant:$roomId").values.toList()
+      .entries(cacheService.getRoomParticipantCacheKey(roomId)).values.toList()
     if (participants.isEmpty()) {
       participants = cacheService.loadAndCacheRoomInfo(roomId).participants
     }
@@ -21,7 +21,7 @@ class RoomParticipantService(
 
   fun getRoomParticipant(roomId: Long, participantId: UUID): ParticipantResponseDTO? {
     var participant = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-      .get("room-participant:$roomId", participantId.toString())
+      .get(cacheService.getRoomParticipantCacheKey(roomId), participantId.toString())
     if (participant == null) {
       participant = cacheService.loadAndCacheRoomInfo(roomId).participants.find { it.id == participantId }
     }
@@ -29,9 +29,9 @@ class RoomParticipantService(
   }
 
   fun editRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    if (participantRedisTemplate.hasKey("room-participant:$roomId")) {
+    if (participantRedisTemplate.hasKey(cacheService.getRoomParticipantCacheKey(roomId))) {
       participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-        .put("room-participant:$roomId", participant.id.toString(), participant)
+        .put(cacheService.getRoomParticipantCacheKey(roomId), participant.id.toString(), participant)
     } else {
       cacheService.loadAndCacheRoomInfo(roomId)
     }
@@ -49,13 +49,13 @@ class RoomParticipantService(
 
   fun deleteRoomParticipant(roomId: Long, participantId: UUID) {
     participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-      .delete("room-participant:$roomId", participantId.toString())
+      .delete(cacheService.getRoomParticipantCacheKey(roomId), participantId.toString())
   }
 
   fun addRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    if (participantRedisTemplate.hasKey("room-participant:$roomId")) {
+    if (participantRedisTemplate.hasKey(cacheService.getRoomParticipantCacheKey(roomId))) {
       participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-        .put("room-participant:$roomId", participant.id.toString(), participant)
+        .put(cacheService.getRoomParticipantCacheKey(roomId), participant.id.toString(), participant)
     }
     cacheService.loadAndCacheRoomInfo(roomId)
   }
