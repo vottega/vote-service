@@ -9,6 +9,7 @@ import java.util.*
 class RoomParticipantService(
   private val cacheService: CacheService,
   private val participantRedisTemplate: RedisTemplate<String, ParticipantResponseDTO>,
+  private val participantCacheScriptService: ParticipantCacheScriptService
 ) {
   fun getRoomParticipantList(roomId: Long): List<ParticipantResponseDTO> {
     var participants = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
@@ -20,18 +21,20 @@ class RoomParticipantService(
   }
 
   fun getRoomParticipant(roomId: Long, participantId: UUID): ParticipantResponseDTO? {
-    var participant = participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
+    return participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .get(cacheService.getRoomParticipantCacheKey(roomId), participantId.toString())
-    if (participant == null) {
-      participant = cacheService.loadAndCacheRoomInfo(roomId).participants.find { it.id == participantId }
-    }
-    return participant
   }
 
+  fun isExistRoom(roomId: Long): Boolean =
+    participantRedisTemplate.hasKey(cacheService.getRoomParticipantCacheKey(roomId))
+
+
   fun editRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    if (participantRedisTemplate.hasKey(cacheService.getRoomParticipantCacheKey(roomId))) {
-      participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-        .put(cacheService.getRoomParticipantCacheKey(roomId), participant.id.toString(), participant)
+    if (isExistRoom(roomId)) {
+      participantCacheScriptService.upsertIfNewer(
+        cacheService.getRoomParticipantCacheKey(roomId),
+        participant,
+      )
     } else {
       cacheService.loadAndCacheRoomInfo(roomId)
     }
@@ -53,9 +56,11 @@ class RoomParticipantService(
   }
 
   fun addRoomParticipant(roomId: Long, participant: ParticipantResponseDTO) {
-    if (participantRedisTemplate.hasKey(cacheService.getRoomParticipantCacheKey(roomId))) {
-      participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
-        .put(cacheService.getRoomParticipantCacheKey(roomId), participant.id.toString(), participant)
+    if (isExistRoom(roomId)) {
+      participantCacheScriptService.upsertIfNewer(
+        cacheService.getRoomParticipantCacheKey(roomId),
+        participant,
+      )
     }
     cacheService.loadAndCacheRoomInfo(roomId)
   }
