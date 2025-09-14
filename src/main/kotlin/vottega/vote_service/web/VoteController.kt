@@ -50,7 +50,7 @@ class VoteController(
   fun addVotePaper(
     @PathVariable voteId: Long,
     @ParticipantId participant: UUID,
-    voteResultType: VotePaperType
+    @RequestBody voteResultType: VotePaperType
   ) =
     voteService.addVotePaper(voteId, participant, voteResultType)
 
