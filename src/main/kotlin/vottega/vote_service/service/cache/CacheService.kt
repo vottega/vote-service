@@ -16,21 +16,13 @@ class CacheService(
   fun loadAndCacheRoomInfo(roomId: Long): RoomResponseDTO {
     val room = redisClient.getRoom(roomId)
 
-    longRedisTemplate.opsForValue().set(getRoomOwnerCacheKey(roomId), room.ownerId)
+    longRedisTemplate.opsForValue().set("room-owner:$roomId", room.ownerId)
     participantRedisTemplate.opsForHash<String, ParticipantResponseDTO>()
       .putAll(
-        getRoomParticipantCacheKey(roomId),
+        "room-participant:$roomId",
         room.participants.associateBy({ it.id.toString() }, { it })
       )
-    
+
     return room
-  }
-
-  fun getRoomOwnerCacheKey(roomId: Long): String {
-    return "room:{$roomId}:owner"
-  }
-
-  fun getRoomParticipantCacheKey(roomId: Long): String {
-    return "room:{$roomId}:participant"
   }
 }
