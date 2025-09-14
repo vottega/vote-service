@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import vottega.security.security.ParticipantId
-import vottega.vote_service.domain.enum.VotePaperType
+import vottega.vote_service.dto.VoteAddRequestDTO
 import vottega.vote_service.dto.VoteRequestDTO
 import vottega.vote_service.dto.VoteStatusRequestDTO
 import vottega.vote_service.service.VoteService
@@ -50,9 +50,8 @@ class VoteController(
   fun addVotePaper(
     @PathVariable voteId: Long,
     @ParticipantId participant: UUID,
-    @RequestBody voteResultType: VotePaperType
-  ) =
-    voteService.addVotePaper(voteId, participant, voteResultType)
+    @RequestBody body: VoteAddRequestDTO
+  ) = voteService.addVotePaper(voteId, participant, body.voteStatusType)
 
   @PostMapping("/{voteId}/reset")
   @Operation(summary = "투표 초기화", description = "투표를 초기화합니다.")

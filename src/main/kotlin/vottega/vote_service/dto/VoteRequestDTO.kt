@@ -2,6 +2,7 @@ package vottega.vote_service.dto
 
 import vottega.vote_service.domain.FractionVO
 import vottega.vote_service.domain.enum.Status
+import vottega.vote_service.domain.enum.VotePaperType
 import java.time.LocalDateTime
 
 data class VoteRequestDTO(
@@ -16,4 +17,8 @@ data class VoteRequestDTO(
 
 data class VoteStatusRequestDTO(
   val status: Status
+)
+
+data class VoteAddRequestDTO(
+  val voteStatusType: VotePaperType
 )
