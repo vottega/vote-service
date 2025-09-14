@@ -81,7 +81,6 @@ dependencies {
   testImplementation("org.testcontainers:testcontainers:1.20.6")
   testImplementation("org.testcontainers:junit-jupiter:1.20.6")
   implementation("com.h2database:h2")
-  implementation("org.redisson:redisson-spring-boot-starter:3.31.0")
 }
 
 kotlin {
