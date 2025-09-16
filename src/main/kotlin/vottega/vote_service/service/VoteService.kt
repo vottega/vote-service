@@ -110,7 +110,7 @@ class VoteService(
     return voteRepository.findByRoomId(roomId).map {
       voteResponseDTOMapper.toVoteResponseDTO(
         it,
-        isVoted = it.votePaperList.any { votePaper -> votePaper.userId == participantId }
+        isVoted = it.votePaperList.any { votePaper -> votePaper.userId == participantId && votePaper.votedAt != null }
       )
     }
   }
