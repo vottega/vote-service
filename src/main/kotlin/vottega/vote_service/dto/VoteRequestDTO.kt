@@ -20,5 +20,5 @@ data class VoteStatusRequestDTO(
 )
 
 data class VoteAddRequestDTO(
-  val voteStatusType: VotePaperType
+  val voteResultType: VotePaperType
 )

@@ -51,7 +51,7 @@ class VoteController(
     @PathVariable voteId: Long,
     @ParticipantId participant: UUID,
     @RequestBody body: VoteAddRequestDTO
-  ) = voteService.addVotePaper(voteId, participant, body.voteStatusType)
+  ) = voteService.addVotePaper(voteId, participant, body.voteResultType)
 
   @PostMapping("/{voteId}/reset")
   @Operation(summary = "투표 초기화", description = "투표를 초기화합니다.")
