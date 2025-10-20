@@ -12,10 +12,14 @@ spring:
     username: minguni
     password: minguni
     driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      connectionInitSql: "SET time_zone='Asia/Seoul'"
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate.jdbc.time_zone: Asia/Seoul  # 드라이버 ↔ DB 변환 기준을 KST로
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -34,10 +38,11 @@ spring:
     redis:
       host: localhost
       port: 6379
+  jackson:
+    time-zone: Asia/Seoul        # JSON 입·출력 전부 한국시간으로
 springdoc:
   swagger-ui:
     path: /api
-
 
 server:
   port: 8082
